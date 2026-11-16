@@ -4,9 +4,14 @@ Site estático publicado no **Cloudflare Pages** (e ainda no GitHub Pages, pelo 
 
 ## Como o site é montado
 - `src/index.template.html`: o site inteiro, com marcadores `<!--@blog-...-->` onde entram os artigos, a listagem, os menus e o sitemap do blog.
-- `content/blog/*.md`: um arquivo por post (front matter YAML + corpo em Markdown).
+- `content/blog/<slug>.<idioma>.md`: um arquivo por post e por idioma (en, pt, es, fr), com front matter YAML + corpo em Markdown. O inglês é obrigatório; os outros são opcionais.
 - `build.mjs`: junta os dois e escreve `dist/index.html` (copia também `admin/` e `uploads/`).
 - `admin/`: CMS (Sveltia) para a agência publicar posts em `/admin/`.
+
+## Idiomas
+O build gera `dist/index.html` (inglês) e, para cada idioma que tiver ao menos um post publicado, `dist/pt/`, `dist/es/` ou `dist/fr/`.
+Nessas páginas o blog (artigos, listagem, filtros, menus) sai no idioma; o resto do site continua em inglês até ser traduzido.
+Traduções em branco são ignoradas. Quando o resto do site estiver traduzido, o seletor de idioma só precisa apontar para `/pt/`, `/es/` e `/fr/`.
 
 Rodar local: `npm install && npm run build` e abrir `dist/index.html`.
 

@@ -30,6 +30,25 @@ const TOPICS = [
 ];
 const MENU_MAX = 4; // quantos posts aparecem nos menus (mais recentes)
 
+// Idiomas. O inglês é o padrão (obrigatório) e sai em dist/index.html; os demais saem em
+// dist/<idioma>/index.html, só se tiverem ao menos um post publicado naquele idioma.
+// Os códigos precisam ser iguais aos de i18n.locales em admin/config.yml.
+const LANGS = ['en', 'pt', 'es', 'fr'];
+const DEFAULT_LANG = 'en';
+
+// Textos que o build gera (artigos, listagem do blog). O resto do site (src/index.template.html)
+// continua em inglês até ser traduzido. Os nomes dos tópicos por idioma ficam em topics.
+const STR = {
+  en: { kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Template', 'Case study': 'Case study' }, home: 'Home', blog: 'Blog', all: 'All', latest: 'Latest articles', onThisPage: 'On this page', share: 'Share', copyLink: 'Copy link', faq: 'Frequently asked questions', sources: 'Sources', minRead: 'min read', featured: 'Featured · Article', readArticle: 'Read the article', comingSoon: 'Coming soon', inPrep: 'New article in preparation', soonText: 'One email a month with the new articles and research.', getEmail: 'Get it by email',
+    topics: ['Learning operations', 'Training intake and prioritization', 'AI and content production', 'Instructional design models', 'Measuring training impact'] },
+  pt: { kinds: { Guide: 'Guia', Article: 'Artigo', Checklist: 'Checklist', Template: 'Modelo', 'Case study': 'Estudo de caso' }, home: 'Início', blog: 'Blog', all: 'Todos', latest: 'Últimos artigos', onThisPage: 'Nesta página', share: 'Compartilhar', copyLink: 'Copiar link', faq: 'Perguntas frequentes', sources: 'Fontes', minRead: 'min de leitura', featured: 'Destaque · Artigo', readArticle: 'Ler o artigo', comingSoon: 'Em breve', inPrep: 'Novo artigo em preparação', soonText: 'Um e-mail por mês com os novos artigos e pesquisas.', getEmail: 'Receba por e-mail',
+    topics: ['Operações de aprendizagem', 'Entrada e priorização de treinamentos', 'IA e produção de conteúdo', 'Modelos de design instrucional', 'Medindo o impacto do treinamento'] },
+  es: { kinds: { Guide: 'Guía', Article: 'Artículo', Checklist: 'Lista de verificación', Template: 'Plantilla', 'Case study': 'Caso de estudio' }, home: 'Inicio', blog: 'Blog', all: 'Todos', latest: 'Últimos artículos', onThisPage: 'En esta página', share: 'Compartir', copyLink: 'Copiar enlace', faq: 'Preguntas frecuentes', sources: 'Fuentes', minRead: 'min de lectura', featured: 'Destacado · Artículo', readArticle: 'Leer el artículo', comingSoon: 'Próximamente', inPrep: 'Nuevo artículo en preparación', soonText: 'Un correo al mes con los nuevos artículos e investigaciones.', getEmail: 'Recíbelo por correo',
+    topics: ['Operaciones de aprendizaje', 'Recepción y priorización de capacitaciones', 'IA y producción de contenidos', 'Modelos de diseño instruccional', 'Medición del impacto de la capacitación'] },
+  fr: { kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Modèle', 'Case study': 'Étude de cas' }, home: 'Accueil', blog: 'Blog', all: 'Tous', latest: 'Derniers articles', onThisPage: 'Sur cette page', share: 'Partager', copyLink: 'Copier le lien', faq: 'Questions fréquentes', sources: 'Sources', minRead: 'min de lecture', featured: 'À la une · Article', readArticle: 'Lire l’article', comingSoon: 'Bientôt', inPrep: 'Nouvel article en préparation', soonText: 'Un e-mail par mois avec les nouveaux articles et études.', getEmail: 'Recevez-le par e-mail',
+    topics: ['Opérations d’apprentissage', 'Réception et priorisation des formations', 'IA et production de contenu', 'Modèles de conception pédagogique', 'Mesurer l’impact de la formation'] },
+};
+
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const stripTags = (s) => s.replace(/<[^>]*>/g, '');
 const fail = (file, msg) => { throw new Error(`${file}: ${msg}`); };
@@ -63,23 +82,35 @@ function renderMarkdown(src) {
 }
 
 // ---------------------------------------------------------------- posts
-function parsePost(file) {
-  const slug = path.basename(file, '.md');
+// Arquivos: content/blog/<slug>.<idioma>.md  (ex.: meu-post.en.md, meu-post.pt.md)
+function readRecord(file) {
+  const base = path.basename(file, '.md');
+  const m0 = base.match(/^(.+)\.([a-z]{2})$/);
+  if (!m0 || !LANGS.includes(m0[2])) fail(file, `o nome precisa terminar em .<idioma>.md com idioma em ${LANGS.join(', ')} (ex.: ${base.replace(/\.[^.]*$/, '')}.en.md)`);
+  const [, slug, lang] = m0;
+  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) fail(file, `nome de arquivo inválido "${slug}" (use só minúsculas, números e hífens)`);
   const raw = fs.readFileSync(file, 'utf8').replace(/\r\n/g, '\n');
   const m = raw.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
   if (!m) fail(file, 'front matter ausente (o arquivo precisa começar com --- ... ---)');
-  const fm = YAML.parse(m[1]) || {};
-  const body = m[2].trim();
-  if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(slug)) fail(file, `nome de arquivo inválido "${slug}" (use só minúsculas, números e hífens)`);
+  return { file, slug, lang, fm: YAML.parse(m[1]) || {}, body: m[2].trim() };
+}
+
+// Campos que o CMS duplica entre idiomas; se faltarem numa tradução, vêm da versão em inglês.
+const SHARED = ['date', 'topic', 'kind', 'featured', 'image', 'read_time'];
+
+function toPost(rec, en) {
+  const { file, slug, lang } = rec;
+  const fm = { ...rec.fm };
+  if (en && lang !== DEFAULT_LANG) for (const k of SHARED) if (fm[k] === undefined || fm[k] === null || fm[k] === '') fm[k] = en.fm[k];
   for (const k of ['title', 'date', 'topic', 'summary']) if (!fm[k]) fail(file, `campo obrigatório ausente: ${k}`);
   const topicIdx = TOPICS.findIndex((t) => t.name === fm.topic);
   if (topicIdx < 0) fail(file, `topic "${fm.topic}" não existe. Opções: ${TOPICS.map((t) => t.name).join(' | ')}`);
-  if (!body) fail(file, 'corpo vazio');
+  if (!rec.body) fail(file, 'corpo vazio');
   const date = fm.date instanceof Date ? fm.date.toISOString().slice(0, 10) : String(fm.date).slice(0, 10);
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) fail(file, `data inválida: ${fm.date}`);
   const adv = fm.advanced || {};
   return {
-    slug, file, topicIdx, date, body,
+    slug, lang, file, topicIdx, date, body: rec.body,
     title: String(fm.title).replace(/\s+/g, ' ').trim(),
     topic: fm.topic,
     summary: String(fm.summary).trim(),
@@ -94,8 +125,8 @@ function parsePost(file) {
     cardTitle: adv.card_title || String(fm.title),
     menuTitle: adv.menu_title || adv.card_title || String(fm.title),
     menuSubtitle: adv.menu_subtitle || String(fm.summary),
-    legacyCardClass: adv.legacy_card_class || '',
-    legacyHeroClass: adv.legacy_hero_class || '',
+    legacyCardClass: adv.legacy_card_class || en?.fm?.advanced?.legacy_card_class || '',
+    legacyHeroClass: adv.legacy_hero_class || en?.fm?.advanced?.legacy_hero_class || '',
     faq: Array.isArray(fm.faq) ? fm.faq.filter((q) => q && q.question && q.answer) : [],
     sources: Array.isArray(fm.sources) ? fm.sources.filter((s) => s && s.url && s.label) : [],
   };
@@ -103,8 +134,8 @@ function parsePost(file) {
 
 const bgStyle = (img) => (img ? ` style="background-image:url('${esc(img)}')"` : '');
 
-function renderArticle(p) {
-  headingPrefix = p.slug;
+function renderArticle(p, T) {
+  headingPrefix = `${p.lang === DEFAULT_LANG ? '' : p.lang + '-'}${p.slug}`;
   headingSeen = new Set();
   const bodyHtml = renderMarkdown(p.body);
 
@@ -112,66 +143,62 @@ function renderArticle(p) {
 
   let faqHtml = '';
   if (p.faq.length) {
-    const id = `${p.slug}-faq`;
-    toc.push([id, 'Frequently asked questions']);
+    const id = `${headingPrefix}-faq`;
+    toc.push([id, T.faq]);
     const items = p.faq.map((q, i) => {
       const n = i + 1;
       const open = i === 0;
       return `<div class="qa" data-open="${open}"><button class="qa-h" aria-expanded="${open}" aria-controls="${id}-q${n}" id="${id}-qh${n}"><span class="ix">${String(n).padStart(2, '0')}.</span><span class="t">${marked.parseInline(String(q.question))}</span><span class="pm" aria-hidden="true"><svg width="14" height="14" viewBox="0 0 16 16"><path d="M8 1v14M1 8h14" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></span></button><div class="qa-b" id="${id}-q${n}" role="region" aria-labelledby="${id}-qh${n}"><div>${marked.parse(String(q.answer), { async: false }).trim()}</div></div></div>`;
     });
-    faqHtml = `<h2 id="${id}">Frequently asked questions</h2><div class="faqx">${items.join('')}</div>`;
+    faqHtml = `<h2 id="${id}">${esc(T.faq)}</h2><div class="faqx">${items.join('')}</div>`;
   }
 
   let srcHtml = '';
   if (p.sources.length) {
-    const id = `${p.slug}-sources`;
-    toc.push([id, 'Sources']);
-    srcHtml = `<h2 id="${id}">Sources</h2><div class="sources"><ul class="pg-list">${p.sources.map((s) => `<li><a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)}</a></li>`).join('')}</ul></div>`;
+    const id = `${headingPrefix}-sources`;
+    toc.push([id, T.sources]);
+    srcHtml = `<h2 id="${id}">${esc(T.sources)}</h2><div class="sources"><ul class="pg-list">${p.sources.map((s) => `<li><a href="${esc(s.url)}" rel="noopener" target="_blank">${esc(s.label)}</a></li>`).join('')}</ul></div>`;
   }
 
   const heroCls = p.legacyHeroClass || 'ah-bg';
   const heroCls2 = /(^| )ah-bg( |$)/.test(heroCls) ? heroCls : `ah-bg ${heroCls}`;
-  const meta = `${esc(p.kind)}${p.readTime ? ` · ${p.readTime} min read` : ''}`;
+  const meta = `${esc(T.kinds[p.kind] || p.kind)}${p.readTime ? ` · ${p.readTime} ${T.minRead}` : ''}`;
+  const topicName = T.topics[p.topicIdx];
 
   return `<div class="page" data-page="blog-${p.slug}" data-title="${esc(p.seoTitle)}" data-group="Blog" hidden>`
     + `<section class="art-hero s-dark"><div class="${esc(heroCls2)}" role="img" aria-label="${esc(p.imageAlt || p.title)}"${bgStyle(p.image)}></div>`
-    + `<div class="wrap ah-in"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">Home</a><i>/</i><a href="#blog">Blog</a><i>/</i><span aria-current="page">${esc(p.menuTitle)}</span></nav>`
-    + `<span class="bx-tag ah-tag">${esc(p.topic)}</span><h1 class="xh-h1">${esc(p.title)}</h1>`
+    + `<div class="wrap ah-in"><nav class="crumbs" aria-label="Breadcrumb"><a href="#home">${esc(T.home)}</a><i>/</i><a href="#blog">${esc(T.blog)}</a><i>/</i><span aria-current="page">${esc(p.menuTitle)}</span></nav>`
+    + `<span class="bx-tag ah-tag">${esc(topicName)}</span><h1 class="xh-h1">${esc(p.title)}</h1>`
     + `<div class="ah-meta"><span class="ah-av" aria-hidden="true"></span><div><b>${esc(p.author)}</b><small>${meta}</small></div></div></div></section>`
-    + `<section class="s-light xsec art-sec"><div class="wrap art"><aside class="toc"><span class="k">On this page</span><ol>`
+    + `<section class="s-light xsec art-sec"><div class="wrap art"><aside class="toc"><span class="k">${esc(T.onThisPage)}</span><ol>`
     + toc.map(([id, t]) => `<li><a href="#" data-scroll="${id}">${t}</a></li>`).join('')
-    + `</ol><div class="toc-share"><span class="k">Share</span><button type="button" class="toc-copy" data-copy>Copy link</button></div></aside>`
+    + `</ol><div class="toc-share"><span class="k">${esc(T.share)}</span><button type="button" class="toc-copy" data-copy>${esc(T.copyLink)}</button></div></aside>`
     + `<article class="art-body">${bodyHtml}${faqHtml}${srcHtml}</article></div></section></div>`;
 }
 
-function card(p, { feat }) {
+function card(p, T, { feat }) {
   const vis = `<div class="bx-vis${feat ? '' : ' sm'}${p.legacyCardClass ? ' ' + esc(p.legacyCardClass) : ''}" role="img" aria-label="${esc(p.imageAlt || p.title)}"${bgStyle(p.image)}></div>`;
-  return `<a class="bx-art${feat ? ' bx-feat' : ''}" data-t="${p.topicIdx}" href="#blog-${p.slug}">${vis}<div class="bx-b"><span class="bx-tag">${esc(p.topic)}</span>${feat ? '<span class="bx-kick">Featured · Article</span>' : ''}<h3>${esc(p.cardTitle)}</h3><p>${esc(p.summary)}</p><span class="bx-go">Read the article <i aria-hidden="true">→</i></span></div></a>`;
+  return `<a class="bx-art${feat ? ' bx-feat' : ''}" data-t="${p.topicIdx}" href="#blog-${p.slug}">${vis}<div class="bx-b"><span class="bx-tag">${esc(T.topics[p.topicIdx])}</span>${feat ? `<span class="bx-kick">${esc(T.featured)}</span>` : ''}<h3>${esc(p.cardTitle)}</h3><p>${esc(p.summary)}</p><span class="bx-go">${esc(T.readArticle)} <i aria-hidden="true">→</i></span></div></a>`;
 }
 
-function soonCard(idx) {
-  return `<div class="bx-art bx-soon" data-t="${idx}"><div class="bx-vis soonv" aria-hidden="true"><div class="bx-ph"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg></div></div><div class="bx-b"><span class="bx-tag">${esc(TOPICS[idx].name)}</span><span class="bx-kick">Coming soon</span><h3>New article in preparation</h3><p>One email a month with the new articles and research.</p><a class="bx-go" href="#" data-scroll="blog-newsletter">Get it by email <i aria-hidden="true">→</i></a></div></div>`;
+function soonCard(idx, T) {
+  return `<div class="bx-art bx-soon" data-t="${idx}"><div class="bx-vis soonv" aria-hidden="true"><div class="bx-ph"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v6l4 2"/><circle cx="12" cy="12" r="10"/></svg></div></div><div class="bx-b"><span class="bx-tag">${esc(T.topics[idx])}</span><span class="bx-kick">${esc(T.comingSoon)}</span><h3>${esc(T.inPrep)}</h3><p>${esc(T.soonText)}</p><a class="bx-go" href="#" data-scroll="blog-newsletter">${esc(T.getEmail)} <i aria-hidden="true">→</i></a></div></div>`;
 }
 
-function renderList(posts) {
+function renderList(posts, T) {
   const feat = posts.find((p) => p.featured) || posts[0];
   const rest = posts.filter((p) => p !== feat);
-  const soon = TOPICS.map((t, i) => (t.soon && !posts.some((p) => p.topicIdx === i) ? soonCard(i) : '')).join('');
-  return `<div class="bx-list">${feat ? `<div class="bx-top">${card(feat, { feat: true })}</div>` : ''}<div class="bx-row">${rest.map((p) => card(p, { feat: false })).join('')}${soon}</div></div>`;
+  const soon = TOPICS.map((t, i) => (t.soon && !posts.some((p) => p.topicIdx === i) ? soonCard(i, T) : '')).join('');
+  return `<div class="bx-list">${feat ? `<div class="bx-top">${card(feat, T, { feat: true })}</div>` : ''}<div class="bx-row">${rest.map((p) => card(p, T, { feat: false })).join('')}${soon}</div></div>`;
 }
 
 // ---------------------------------------------------------------- build
-function build() {
-  const files = fs.existsSync(POSTS_DIR) ? fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md')).map((f) => path.join(POSTS_DIR, f)) : [];
-  const all = files.map(parsePost);
-  const drafts = all.filter((p) => p.draft);
-  const posts = all.filter((p) => !p.draft).sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
-
-  const tpl = fs.readFileSync(path.join(ROOT, 'src/index.template.html'), 'utf8');
+function renderPage(tpl, lang, posts) {
+  const T = STR[lang];
   const recent = posts.slice(0, MENU_MAX);
   const parts = {
-    '<!--@blog-pages-->': posts.map(renderArticle).join(''),
-    '<!--@blog-list-->': renderList(posts),
+    '<!--@blog-pages-->': posts.map((p) => renderArticle(p, T)).join(''),
+    '<!--@blog-list-->': renderList(posts, T),
     '<!--@blog-menu-->': recent.map((p, i) => `<li><a class="mm-i" style="--k:${4 + i}" href="#blog-${p.slug}"><b>${esc(p.menuTitle)}</b><span>${esc(p.menuSubtitle)}</span></a></li>`).join(''),
     '<!--@blog-overlay-->': recent.map((p) => `<li><a href="#blog-${p.slug}">${esc(p.menuTitle)}</a></li>`).join(''),
     '<!--@blog-sitemap-->': posts.map((p, i) => `<a class="sm-card rv" href="#blog-${p.slug}"><span class="sm-n">${11 + i} · /blog/${p.slug}</span><b>${esc(p.menuTitle)}</b><span class="sm-t">${esc(p.title)}</span><span class="sm-ph">P1</span></a>`).join(''),
@@ -181,17 +208,53 @@ function build() {
     if (!out.includes(marker)) throw new Error(`marcador ${marker} não encontrado em src/index.template.html`);
     out = out.split(marker).join(html);
   }
+  if (lang !== DEFAULT_LANG) {
+    out = out.replace('<html lang="en">', `<html lang="${lang}">`);
+    out = out.replace('<h2 class="h2 rv">Latest articles</h2>', `<h2 class="h2 rv">${esc(T.latest)}</h2>`);
+    // botões de filtro do blog: mesmos data-t, rótulos traduzidos
+    out = out.replace(/(<div class="filters bx-filters rv" id="blog-filters"[^>]*>)([\s\S]*?)(<\/div>)/, (m, a, inner, c) =>
+      a + inner.replace(/(<button[^>]*data-t="([^"]+)"[^>]*>)([^<]*)(<\/button>)/g, (mm, o, t, label, cl) => o + esc(t === 'all' ? T.all : T.topics[Number(t)] ?? label) + cl) + c);
+  }
+  return out;
+}
+
+function build() {
+  const files = fs.existsSync(POSTS_DIR) ? fs.readdirSync(POSTS_DIR).filter((f) => f.endsWith('.md')).map((f) => path.join(POSTS_DIR, f)) : [];
+  const recs = files.map(readRecord);
+  const enBySlug = new Map(recs.filter((r) => r.lang === DEFAULT_LANG).map((r) => [r.slug, r]));
+  const tpl = fs.readFileSync(path.join(ROOT, 'src/index.template.html'), 'utf8');
 
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
-  fs.writeFileSync(path.join(OUT, 'index.html'), out);
+
+  const report = [];
+  for (const lang of LANGS) {
+    const mine = recs.filter((r) => r.lang === lang);
+    let skipped = 0;
+    const posts = [];
+    for (const r of mine) {
+      // tradução ainda em branco (o CMS pode criar o arquivo vazio): ignora sem erro
+      if (lang !== DEFAULT_LANG && !(r.fm.title && r.fm.summary && r.body)) { skipped++; continue; }
+      if (lang !== DEFAULT_LANG && !enBySlug.has(r.slug)) console.warn(`aviso: ${r.file} não tem a versão em inglês (${r.slug}.en.md); data e tópico precisam estar preenchidos nela.`);
+      const p = toPost(r, enBySlug.get(r.slug));
+      if (!p.draft) posts.push(p);
+    }
+    posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
+    if (!posts.length && lang !== DEFAULT_LANG) { report.push(`${lang}: nenhum post publicado, página não gerada`); continue; }
+    const out = renderPage(tpl, lang, posts);
+    const dir = lang === DEFAULT_LANG ? OUT : path.join(OUT, lang);
+    fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(path.join(dir, 'index.html'), out);
+    const feat = posts.find((x) => x.featured) || posts[0];
+    report.push(`${lang}: ${posts.length} post(s) → ${lang === DEFAULT_LANG ? 'dist/index.html' : `dist/${lang}/index.html`}${skipped ? `, ${skipped} tradução(ões) em branco ignorada(s)` : ''}`);
+    for (const p of posts) report.push(`    - ${p.date}  #blog-${p.slug}${p === feat ? '  (destaque)' : ''}`);
+  }
+
   for (const dir of ['admin', 'uploads']) {
     if (fs.existsSync(path.join(ROOT, dir))) fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
   }
   if (fs.existsSync(path.join(ROOT, '.nojekyll'))) fs.copyFileSync(path.join(ROOT, '.nojekyll'), path.join(OUT, '.nojekyll'));
-
-  console.log(`build ok: ${posts.length} post(s) publicados${drafts.length ? `, ${drafts.length} rascunho(s) ignorado(s)` : ''} → dist/`);
-  for (const p of posts) console.log(`  - ${p.date}  #blog-${p.slug}${p === (posts.find((x) => x.featured) || posts[0]) ? '  (destaque)' : ''}`);
+  console.log('build ok\n  ' + report.join('\n  '));
 }
 
 try {

@@ -18,6 +18,14 @@ locale: pt
 media_folder: uploads/blog
 public_folder: /uploads/blog
 
+# Idiomas. Mantenha iguais a LANGS em build.mjs. O inglês é obrigatório; PT, ES e FR são opcionais.
+# Cada idioma vira um arquivo: content/blog/<slug>.<idioma>.md
+i18n:
+  structure: multiple_files
+  locales: [en, pt, es, fr]
+  default_locale: en
+  save_all_locales: false      # só grava os idiomas que têm conteúdo
+
 collections:
   - name: blog
     label: Posts do blog
@@ -26,14 +34,16 @@ collections:
     extension: md
     format: yaml-frontmatter
     create: true
+    i18n: true
     slug: '{{slug}}'            # o nome do arquivo vira o endereço: #blog-<slug>
     identifier_field: title
     summary: '{{title}} · {{date}}'
     sortable_fields: [date, title, topic]
     fields:
-      - { name: title, label: Título (H1 do artigo), widget: string }
-      - { name: date, label: Data de publicação, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
+      - { name: title, i18n: true, label: Título (H1 do artigo), widget: string }
+      - { name: date, i18n: duplicate, label: Data de publicação, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
       - name: topic
+        i18n: duplicate
         label: Tópico
         widget: select
         options:
@@ -42,19 +52,21 @@ collections:
           - AI and content production
           - Instructional design models
           - Measuring training impact
-      - { name: summary, label: Resumo (aparece no cartão da listagem), widget: text, pattern: ['^.{10,180}$', 'Entre 10 e 180 caracteres'] }
-      - { name: kind, label: Tipo, widget: select, options: [Guide, Article, Checklist, Template, Case study], default: Article }
-      - { name: read_time, label: Tempo de leitura (minutos), widget: number, value_type: int, min: 1, max: 60, required: false }
-      - { name: author, label: Autor, widget: string, default: The Saros team }
-      - { name: featured, label: Destaque no topo da listagem (só um post por vez), widget: boolean, default: false }
-      - { name: image, label: Imagem de capa (16:9, ideal 1600x900), widget: image, required: false }
-      - { name: image_alt, label: Descrição da imagem (acessibilidade), widget: string, required: false }
-      - { name: draft, label: Rascunho (marcado = não publica no site), widget: boolean, default: true }
+      - { name: summary, i18n: true, label: Resumo (aparece no cartão da listagem), widget: text, pattern: ['^.{10,180}$', 'Entre 10 e 180 caracteres'] }
+      - { name: kind, i18n: duplicate, label: Tipo, widget: select, options: [Guide, Article, Checklist, Template, Case study], default: Article }
+      - { name: read_time, i18n: duplicate, label: Tempo de leitura (minutos), widget: number, value_type: int, min: 1, max: 60, required: false }
+      - { name: author, i18n: true, label: Autor, widget: string, default: The Saros team }
+      - { name: featured, i18n: duplicate, label: Destaque no topo da listagem (só um post por vez), widget: boolean, default: false }
+      - { name: image, i18n: duplicate, label: Imagem de capa (16:9, ideal 1600x900), widget: image, required: false }
+      - { name: image_alt, i18n: true, label: Descrição da imagem (acessibilidade), widget: string, required: false }
+      - { name: draft, i18n: true, label: Rascunho (marcado = não publica no site), widget: boolean, default: true }
       - name: body
+        i18n: true
         label: Texto do artigo
         widget: markdown
         hint: 'Use títulos de nível 2 (##) para as seções; eles viram o sumário. Os 2 artigos antigos usam HTML: para editá-los, use o modo "Código" do editor.'
       - name: faq
+        i18n: true
         label: Perguntas frequentes
         widget: list
         required: false
@@ -64,6 +76,7 @@ collections:
           - { name: question, label: Pergunta, widget: string }
           - { name: answer, label: Resposta, widget: text }
       - name: sources
+        i18n: true
         label: Fontes
         widget: list
         required: false
@@ -73,6 +86,7 @@ collections:
           - { name: label, label: Nome da fonte, widget: string }
           - { name: url, label: Link, widget: string, pattern: ['^https?://', 'O link precisa começar com http:// ou https://'] }
       - name: advanced
+        i18n: true
         label: Opções avançadas (opcional)
         widget: object
         required: false
