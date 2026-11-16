@@ -1,0 +1,87 @@
+# Sveltia CMS: interface de publicação do blog.
+# Os campos precisam bater com o que build.mjs lê. Se mudar um, mude o outro.
+
+backend:
+  name: github
+  repo: rgangoni-rf/saros-homepage
+  branch: main
+  # Opcional: URL do Worker de OAuth (sveltia-cms-auth) para entrar com o botão
+  # "Entrar com GitHub". Sem isso, o login é por token pessoal do GitHub.
+  # base_url: https://SEU-WORKER.workers.dev
+
+# Descomente para a agência só criar rascunhos que viram Pull Request,
+# e o post só vai ao ar quando alguém aprovar (Publicar).
+# publish_mode: editorial_workflow
+
+site_url: https://saros-homepage.pages.dev
+display_url: https://saros-homepage.pages.dev
+locale: pt
+media_folder: uploads/blog
+public_folder: /uploads/blog
+
+collections:
+  - name: blog
+    label: Posts do blog
+    label_singular: Post
+    folder: content/blog
+    extension: md
+    format: yaml-frontmatter
+    create: true
+    slug: '{{slug}}'            # o nome do arquivo vira o endereço: #blog-<slug>
+    identifier_field: title
+    summary: '{{title}} · {{date}}'
+    sortable_fields: [date, title, topic]
+    fields:
+      - { name: title, label: Título (H1 do artigo), widget: string }
+      - { name: date, label: Data de publicação, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, format: 'YYYY-MM-DD' }
+      - name: topic
+        label: Tópico
+        widget: select
+        options:
+          - Learning operations
+          - Training intake and prioritization
+          - AI and content production
+          - Instructional design models
+          - Measuring training impact
+      - { name: summary, label: Resumo (aparece no cartão da listagem), widget: text, pattern: ['^.{10,180}$', 'Entre 10 e 180 caracteres'] }
+      - { name: kind, label: Tipo, widget: select, options: [Guide, Article, Checklist, Template, Case study], default: Article }
+      - { name: read_time, label: Tempo de leitura (minutos), widget: number, value_type: int, min: 1, max: 60, required: false }
+      - { name: author, label: Autor, widget: string, default: The Saros team }
+      - { name: featured, label: Destaque no topo da listagem (só um post por vez), widget: boolean, default: false }
+      - { name: image, label: Imagem de capa (16:9, ideal 1600x900), widget: image, required: false }
+      - { name: image_alt, label: Descrição da imagem (acessibilidade), widget: string, required: false }
+      - { name: draft, label: Rascunho (marcado = não publica no site), widget: boolean, default: true }
+      - name: body
+        label: Texto do artigo
+        widget: markdown
+        hint: 'Use títulos de nível 2 (##) para as seções; eles viram o sumário. Os 2 artigos antigos usam HTML: para editá-los, use o modo "Código" do editor.'
+      - name: faq
+        label: Perguntas frequentes
+        widget: list
+        required: false
+        collapsed: true
+        summary: '{{fields.question}}'
+        fields:
+          - { name: question, label: Pergunta, widget: string }
+          - { name: answer, label: Resposta, widget: text }
+      - name: sources
+        label: Fontes
+        widget: list
+        required: false
+        collapsed: true
+        summary: '{{fields.label}}'
+        fields:
+          - { name: label, label: Nome da fonte, widget: string }
+          - { name: url, label: Link, widget: string, pattern: ['^https?://', 'O link precisa começar com http:// ou https://'] }
+      - name: advanced
+        label: Opções avançadas (opcional)
+        widget: object
+        required: false
+        collapsed: true
+        fields:
+          - { name: seo_title, label: Título da aba do navegador / Google (padrão = título), widget: string, required: false }
+          - { name: card_title, label: Título no cartão da listagem (padrão = título), widget: string, required: false }
+          - { name: menu_title, label: Título curto nos menus e no sitemap, widget: string, required: false }
+          - { name: menu_subtitle, label: Subtítulo no menu (padrão = resumo), widget: string, required: false }
+          - { name: legacy_card_class, widget: hidden, required: false }
+          - { name: legacy_hero_class, widget: hidden, required: false }

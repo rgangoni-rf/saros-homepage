@@ -1,0 +1,12 @@
+{
+  "name": "saros-homepage",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "marked": "18.2.1",
+    "yaml": "2.9.1"
+  }
+}
