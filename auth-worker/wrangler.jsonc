@@ -1,0 +1,15 @@
+{
+  "$schema": "../node_modules/wrangler/config-schema.json",
+  "name": "saros-cms-auth",
+  "main": "index.js",
+  "compatibility_date": "2026-11-01",
+  "workers_dev": true,
+  "vars": {
+    // Endereço do site (onde fica o /admin), sem barra no final. Ex.: https://saros-homepage.SEU-SUBDOMINIO.workers.dev
+    "ALLOWED_ORIGIN": "",
+    // Cloudflare Zero Trust → Settings → Custom pages / ou na tela do app Access. Ex.: suaequipe.cloudflareaccess.com
+    "TEAM_DOMAIN": "",
+    // "Application Audience (AUD) Tag" do aplicativo Access deste Worker
+    "POLICY_AUD": ""
+  }
+}

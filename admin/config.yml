@@ -5,9 +5,10 @@ backend:
   name: github
   repo: rgangoni-rf/saros-homepage
   branch: main
-  # Opcional: URL do Worker de OAuth (sveltia-cms-auth) para entrar com o botão
-  # "Entrar com GitHub". Sem isso, o login é por token pessoal do GitHub.
-  # base_url: https://SEU-WORKER.workers.dev
+  # Login da agência: URL do Worker em auth-worker/ (protegido pelo Cloudflare Access).
+  # Descomente depois de publicar o Worker (veja auth-worker/README.md). Sem isso, o
+  # login é só por token pessoal do GitHub.
+  # base_url: https://saros-cms-auth.SEU-SUBDOMINIO.workers.dev
 
 # Descomente para a agência só criar rascunhos que viram Pull Request,
 # e o post só vai ao ar quando alguém aprovar (Publicar).
