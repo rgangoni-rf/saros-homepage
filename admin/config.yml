@@ -6,16 +6,14 @@ backend:
   repo: rgangoni-rf/saros-homepage
   branch: main
   # Login da agência: URL do Worker em auth-worker/ (protegido pelo Cloudflare Access).
-  # Descomente depois de publicar o Worker (veja auth-worker/README.md). Sem isso, o
-  # login é só por token pessoal do GitHub.
-  # base_url: https://saros-cms-auth.SEU-SUBDOMINIO.workers.dev
+  base_url: https://saros-cms-auth.rgangoni.workers.dev
 
 # Descomente para a agência só criar rascunhos que viram Pull Request,
 # e o post só vai ao ar quando alguém aprovar (Publicar).
 # publish_mode: editorial_workflow
 
-site_url: https://saros-homepage.pages.dev
-display_url: https://saros-homepage.pages.dev
+site_url: https://saros-homepage.rgangoni.workers.dev
+display_url: https://saros-homepage.rgangoni.workers.dev
 locale: pt
 media_folder: uploads/blog
 public_folder: /uploads/blog
