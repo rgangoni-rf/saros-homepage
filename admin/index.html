@@ -9,5 +9,25 @@
 <body>
   <!-- Sveltia CMS: lê /admin/config.yml e grava os posts no GitHub (content/blog/*.md) -->
   <script src="https://unpkg.com/@sveltia/cms@0.267.1/dist/sveltia-cms.js"></script>
+  <script>
+    // O botão de login é do CMS e diz "GitHub". Aqui o login real é por e-mail (Cloudflare Access),
+    // então trocamos só o texto do botão na tela de login. Falha em silêncio se o CMS mudar o markup.
+    (function () {
+      function fix() {
+        document.querySelectorAll('button').forEach(function (b) {
+          if (b.dataset.sarosFixed || !/github/i.test(b.textContent)) return;
+          var w = document.createTreeWalker(b, NodeFilter.SHOW_TEXT), n, done = false;
+          while ((n = w.nextNode())) {
+            if (/github/i.test(n.nodeValue)) {
+              n.nodeValue = n.nodeValue.replace(/(com|with)( o)? GitHub/i, 'com e-mail').replace(/GitHub/gi, 'e-mail');
+              done = true;
+            }
+          }
+          if (done) b.dataset.sarosFixed = '1';
+        });
+      }
+      try { new MutationObserver(fix).observe(document.documentElement, { childList: true, subtree: true }); fix(); } catch (e) {}
+    })();
+  </script>
 </body>
 </html>
