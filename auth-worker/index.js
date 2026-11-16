@@ -42,14 +42,17 @@ export default {
     if (url.pathname !== '/auth') return msg('Login do CMS da Saros. Use o painel em /admin.', 404);
 
     if (!env.TEAM_DOMAIN || !env.POLICY_AUD || !env.GITHUB_TOKEN || !env.ALLOWED_ORIGIN) {
+      const faltando = ['TEAM_DOMAIN', 'POLICY_AUD', 'GITHUB_TOKEN', 'ALLOWED_ORIGIN'].filter((k) => !env[k]);
+      console.error('config ausente:', faltando.join(', '));
       return msg('Login não configurado. Avise quem administra o site.', 503);
     }
     const jwt = request.headers.get('Cf-Access-Jwt-Assertion');
-    if (!jwt) return msg('Acesso negado.', 401);
+    if (!jwt) { console.error('sem header Cf-Access-Jwt-Assertion'); return msg('Acesso negado.', 401); }
     let who;
     try {
       who = await verifyAccessJwt(jwt, env);
     } catch (e) {
+      console.error('jwt recusado:', e.message);
       return msg('Acesso negado.', 403);
     }
 
