@@ -75,3 +75,22 @@ nomes de ferramentas de terceiros (Slack, Teams, Workday, SAP, HubSpot, Salesfor
 - `⟦0⟧`, `⟦1⟧`… são expressões de código: mantenha cada marcador **exatamente igual**, uma vez, na posição que a gramática pedir.
 - A sequência `\n` (barra + n) é uma quebra de linha de e-mail: mantenha-a como está.
 - Mantenha `$`, `%`, números e unidades na ordem lógica do idioma, sem alterar o marcador (ex.: `$⟦3⟧/hour` → ES `⟦3⟧ $/hora`; FR-CA `⟦3⟧ $/heure`).
+
+---
+# Adendo: PT-BR (português do Brasil) — EN → PT-BR
+Aqui a fonte continua sendo o inglês (as chaves são o texto em inglês). O valor é **português do Brasil**.
+- Trate o leitor por **você** (imperativo de você: «agende», «descubra», «teste»). Evite «tu» e «vós».
+- Vocabulário brasileiro: equipe (não «equipa»), celular, tela, arquivo, e-mail (com hífen), time (para equipes de trabalho: «equipe»), gerenciar, compartilhar, treinamento (não «formação»).
+- Linguagem inclusiva sem @, x ou «e»: prefira coletivos e perífrases («a equipe de L&D», «pessoas que lideram…»).
+- Números: decimal com vírgula, milhares com ponto (1.760; 12.500); **sem** espaço antes de % («12%»).
+- Moeda: o site usa dólares; mantenha o valor e **escreva «US$»** (ex.: «$310,000» → «US$ 310.000»; «$250K» → «US$ 250 mil»; «$1.2M» → «US$ 1,2 milhão»), sem converter para reais.
+- Aspas: “ ” . Títulos em caixa de frase (só a primeira palavra e nomes próprios em maiúscula).
+- Tom: claro, direto, profissional; frases curtas; verbos de ação nos botões.
+- Glossário PT-BR (use sempre os mesmos termos; coerente com os nomes de tópicos do blog):
+  learning operations → operações de aprendizagem · L&D → L&D · training (corporativo) → treinamento · training request → solicitação de treinamento ·
+  training intake → entrada de solicitações de treinamento · intake form → formulário de solicitação · project pipeline → pipeline de projetos ·
+  learner → pessoa aprendiz / aprendiz · role-based learning paths → trilhas de aprendizagem por função · stakeholders → partes interessadas ·
+  dashboard → painel · onboarding → onboarding · backlog → backlog · workflow → fluxo de trabalho · content production → produção de conteúdo ·
+  analytics → analytics (manter) / análises · pricing → preços · plans → planos · book a demo → agende uma demo · work email → e-mail corporativo ·
+  sign in → entrar · Free tools → Ferramentas gratuitas · Coming soon → Em breve · Health Check → Health Check (manter) + descritor traduzido.
+- Marcadores internos já em português (`[confirmar: …]`, `[definir: …]`, `[inserir …]`, «Nota interna», «Nota para o time») e textos da fonte que já estão em português: devolva **idênticos**.

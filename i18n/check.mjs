@@ -9,7 +9,7 @@ const missing = new Set();
 translateHtml(html, {}, { missing });
 const keys = [...missing];
 let bad = 0;
-for (const lang of ['es', 'fr']) {
+for (const lang of ['pt', 'es', 'fr']) {
   const cat = JSON.parse(fs.readFileSync(D + `${lang}.json`, 'utf8'));
   const miss = keys.filter((k) => cat[k] === undefined);
   console.log(`${lang}: ${keys.length - miss.length}/${keys.length} textos com tradução, ${miss.length} faltando`);

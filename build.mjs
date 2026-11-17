@@ -231,7 +231,7 @@ function switcher(out, lang, available) {
 // Ferramentas embutidas (iframes srcdoc): formatação de números, datas e moeda por idioma.
 // Os trechos são buscados na forma escapada em que estão no atributo srcdoc.
 const attrEsc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
-const LOCALE = { es: 'es-ES', fr: 'fr-CA' };
+const LOCALE = { pt: 'pt-BR', es: 'es-ES', fr: 'fr-CA' };
 function patchTools(html, lang) {
   const loc = LOCALE[lang];
   if (!loc) return html;
@@ -240,9 +240,12 @@ function patchTools(html, lang) {
     if (!html.includes(f)) { console.warn(`aviso: trecho não encontrado nas ferramentas (${label}); a formatação em ${lang} pode ficar em estilo inglês.`); return; }
     html = html.split(f).join(attrEsc(to));
   };
-  // $1.2M / $250K  ->  1,2 M$ / 250 k$ (espaço insécable), com separadores do idioma
-  swap("const money = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + fmt(n / 1000) + 'K';",
-    `const money = n => n >= 1e6 ? (n / 1e6).toLocaleString('${loc}', {minimumFractionDigits: n >= 1e7 ? 0 : 1, maximumFractionDigits: n >= 1e7 ? 0 : 1}) + '\u00a0M$' : fmt(n / 1000) + '\u00a0k$';`, 'moeda da calculadora');
+  // $1.2M / $250K  ->  ES/FR: 1,2 M$ / 250 k$ (espaço insécable); PT: US$ 1,2 mi / US$ 250 mil. Separadores do idioma.
+  const mFmt = `(n / 1e6).toLocaleString('${loc}', {minimumFractionDigits: n >= 1e7 ? 0 : 1, maximumFractionDigits: n >= 1e7 ? 0 : 1})`;
+  const money = lang === 'pt'
+    ? `const money = n => n >= 1e6 ? 'US$\u00a0' + ${mFmt} + '\u00a0mi' : 'US$\u00a0' + fmt(n / 1000) + '\u00a0mil';`
+    : `const money = n => n >= 1e6 ? ${mFmt} + '\u00a0M$' : fmt(n / 1000) + '\u00a0k$';`;
+  swap("const money = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + fmt(n / 1000) + 'K';", money, 'moeda da calculadora');
   html = html.split(attrEsc("'en-US'")).join(attrEsc(`'${loc}'`));
   html = html.split("'en-US'").join(`'${loc}'`); // contadores da página principal
   html = html.split('&lt;html lang=&quot;en&quot;').join(`&lt;html lang=&quot;${HTML_LANG[lang]}&quot;`);
