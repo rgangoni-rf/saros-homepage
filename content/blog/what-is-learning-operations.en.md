@@ -1,6 +1,6 @@
 ---
 title: What is learning operations? A practical guide for L&D leaders
-date: 2026-10-20
+date: 2026-11-11
 topic: Learning operations
 summary: The definition, the five pillars and how to start in 90 days.
 kind: Guide

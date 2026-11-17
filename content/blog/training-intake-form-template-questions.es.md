@@ -1,6 +1,6 @@
 ---
 title: "Formulario de solicitud de formación: las 9 preguntas que toda solicitud debe responder"
-date: 2026-10-10
+date: 2026-11-16
 topic: Training intake and prioritization
 summary: "Con una lista de triaje y un modelo de puntuación."
 kind: Guide

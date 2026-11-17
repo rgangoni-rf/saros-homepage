@@ -1,6 +1,6 @@
 ---
 title: "Training intake form: the 9 questions every request should answer"
-date: 2026-10-10
+date: 2026-11-16
 topic: Training intake and prioritization
 summary: With a triage checklist and a scoring model.
 kind: Guide

@@ -1,6 +1,6 @@
 ---
 title: "Formulário de solicitação de treinamento: as 9 perguntas que toda solicitação deve responder"
-date: 2026-10-10
+date: 2026-11-16
 topic: Training intake and prioritization
 summary: Com checklist de triagem e modelo de pontuação.
 kind: Guide

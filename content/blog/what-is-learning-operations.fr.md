@@ -1,6 +1,6 @@
 ---
 title: "Qu’est-ce que les opérations d’apprentissage ? Guide pratique pour les responsables de L&D"
-date: 2026-10-20
+date: 2026-11-11
 topic: Learning operations
 summary: "La définition, les cinq piliers et comment démarrer en 90 jours."
 kind: Guide
