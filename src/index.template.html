@@ -3947,7 +3947,7 @@ function gate(){
 }
 function report(){
   const r=compute(), a=S.ans, c=r.cost;
-  const name=S.contact.first?esc(S.contact.first)+&#x27;, here&#x27;:&#x27;Here&#x27;;
+  const name=S.contact.first?`${esc(S.contact.first)}, here&#x27;s how your L&amp;amp;D operation runs today`:`Here&#x27;s how your L&amp;amp;D operation runs today`;
   const detailKeys=[r.biggest,...DIMS.map(d=&gt;d.key).filter(k=&gt;k!==r.biggest&amp;&amp;r.dims[k]&lt;60).sort((x,y)=&gt;r.dims[x]-r.dims[y])];
   const strengths=DIMS.map(d=&gt;d.key).filter(k=&gt;r.dims[k]&gt;=70);
   const idk=[&#x27;C1&#x27;,&#x27;C2&#x27;,&#x27;C3&#x27;,&#x27;C4&#x27;].filter(id=&gt;C.find(q=&gt;q.id===id).options[a[id]]===IDK);
@@ -3956,7 +3956,7 @@ function report(){
     return `&lt;article class=&quot;dimcard&quot; style=&quot;--c:var(${l.color})&quot;&gt;&lt;div class=&quot;dc-h&quot;&gt;&lt;h3&gt;${esc(dimName(k))}&lt;/h3&gt;&lt;span class=&quot;pill&quot; style=&quot;--c:var(${l.color})&quot;&gt;${v} · ${l.name}&lt;/span&gt;&lt;/div&gt;${k===r.biggest?&#x27;&lt;span class=&quot;big&quot;&gt;Your biggest opportunity&lt;/span&gt;&#x27;:&#x27;&#x27;}
      &lt;dl&gt;&lt;dt&gt;What we see&lt;/dt&gt;&lt;dd&gt;${esc(t.see)}&lt;/dd&gt;&lt;dt&gt;What it creates&lt;/dt&gt;&lt;dd&gt;${esc(t.creates)}&lt;/dd&gt;&lt;dt&gt;What to do next&lt;/dt&gt;&lt;dd&gt;${esc(t.next)}&lt;/dd&gt;&lt;dt&gt;How Saros helps&lt;/dt&gt;&lt;dd class=&quot;rf&quot;&gt;${esc(t.rf)}&lt;/dd&gt;&lt;/dl&gt;&lt;/article&gt;`};
   return `&lt;div class=&quot;res&quot;&gt;
-   &lt;div class=&quot;res-h&quot;&gt;&lt;span class=&quot;tag&quot;&gt;Full report&lt;/span&gt;&lt;h2 class=&quot;h3&quot;&gt;${name}&#x27;s how your L&amp;amp;D operation runs today&lt;/h2&gt;&lt;/div&gt;
+   &lt;div class=&quot;res-h&quot;&gt;&lt;span class=&quot;tag&quot;&gt;Full report&lt;/span&gt;&lt;h2 class=&quot;h3&quot;&gt;${name}&lt;/h2&gt;&lt;/div&gt;
    ${scoreHead(r)}
    &lt;p class=&quot;lv&quot;&gt;${esc(r.level.text)}&lt;/p&gt;
    &lt;section class=&quot;panel&quot;&gt;&lt;span class=&quot;tag&quot;&gt;Your L&amp;amp;D Operating Profile&lt;/span&gt;${bars(r)}
@@ -5069,7 +5069,7 @@ function engine() {
   const sP = side(ini.p);
   const budTxt = A.bud ? ({ &#x27;very low&#x27;: &#x27;a very low budget per person&#x27;, low: &#x27;a low budget per person&#x27;, medium: &#x27;a medium budget per person&#x27;, high: &#x27;a high budget per person&#x27;, none: &#x27;no budget yet&#x27;, unknown: &#x27;an open budget&#x27; })[opt(&#x27;bud&#x27;, A.bud)[1]] : &#x27;an open budget&#x27;;
   if (sP) why.push(&#x27;An audience in &#x27; + (A.cap ? A.cap.toLowerCase() : &#x27;several places&#x27;) + &#x27;, with &#x27; + budTxt + &#x27;, pulls this toward &#x27; + sP + &#x27;.&#x27;);
-  const GOALTXT = { Know: &#x27;Knowing&#x27;, Do: &#x27;Doing the task&#x27;, &#x27;Change behavior&#x27;: &#x27;Changing behavior&#x27; };
+  const GOALTXT = { &#x27;Know&#x27;: &#x27;Knowing&#x27;, &#x27;Do&#x27;: &#x27;Doing the task&#x27;, &#x27;Change behavior&#x27;: &#x27;Changing behavior&#x27; };
   if (A.goal) why.push(GOALTXT[A.goal] + &#x27; &#x27; + (ini.t &lt; 0.45 ? &#x27;needs live moments&#x27; : ini.t &gt; 0.55 ? &#x27;can be met at each person’s pace&#x27; : &#x27;mixes live and self-paced moments&#x27;) + &#x27;, with &#x27; + (A.urg ? &#x27;a deadline of &#x27; + A.urg.toLowerCase() : &#x27;the deadline you set&#x27;) + &#x27;.&#x27;);
   if (f &gt; 0) why.push(&#x27;The volume and complexity of the content call for a mix of formats, for reinforcement.&#x27;);
   cuts.forEach(c =&gt; why.push(c));

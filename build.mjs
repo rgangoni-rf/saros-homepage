@@ -13,6 +13,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { marked } from 'marked';
 import YAML from 'yaml';
+import { translateHtml } from './i18n/translate.mjs';
 
 const ROOT = path.dirname(fileURLToPath(import.meta.url));
 const POSTS_DIR = path.join(ROOT, 'content/blog');
@@ -34,18 +35,21 @@ const MENU_MAX = 4; // quantos posts aparecem nos menus (mais recentes)
 // dist/<idioma>/index.html, só se tiverem ao menos um post publicado naquele idioma.
 // Os códigos precisam ser iguais aos de i18n.locales em admin/config.yml.
 const LANGS = ['en', 'pt', 'es', 'fr'];
+// es = espanhol da Espanha (es-ES); fr = francês canadense (fr-CA). Pastas: /es/ e /fr/.
+const HTML_LANG = { en: 'en', pt: 'pt-BR', es: 'es-ES', fr: 'fr-CA' };
+const NATIVE = { en: 'English', pt: 'Português', es: 'Español', fr: 'Français' };
 const DEFAULT_LANG = 'en';
 
 // Textos que o build gera (artigos, listagem do blog). O resto do site (src/index.template.html)
 // continua em inglês até ser traduzido. Os nomes dos tópicos por idioma ficam em topics.
 const STR = {
-  en: { kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Template', 'Case study': 'Case study' }, home: 'Home', blog: 'Blog', all: 'All', latest: 'Latest articles', onThisPage: 'On this page', share: 'Share', copyLink: 'Copy link', faq: 'Frequently asked questions', sources: 'Sources', minRead: 'min read', featured: 'Featured · Article', readArticle: 'Read the article', comingSoon: 'Coming soon', inPrep: 'New article in preparation', soonText: 'One email a month with the new articles and research.', getEmail: 'Get it by email',
+  en: { language: 'Language', chooseLanguage: 'Choose a language', soonShort: 'soon', kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Template', 'Case study': 'Case study' }, home: 'Home', blog: 'Blog', all: 'All', latest: 'Latest articles', onThisPage: 'On this page', share: 'Share', copyLink: 'Copy link', faq: 'Frequently asked questions', sources: 'Sources', minRead: 'min read', featured: 'Featured · Article', readArticle: 'Read the article', comingSoon: 'Coming soon', inPrep: 'New article in preparation', soonText: 'One email a month with the new articles and research.', getEmail: 'Get it by email',
     topics: ['Learning operations', 'Training intake and prioritization', 'AI and content production', 'Instructional design models', 'Measuring training impact'] },
-  pt: { kinds: { Guide: 'Guia', Article: 'Artigo', Checklist: 'Checklist', Template: 'Modelo', 'Case study': 'Estudo de caso' }, home: 'Início', blog: 'Blog', all: 'Todos', latest: 'Últimos artigos', onThisPage: 'Nesta página', share: 'Compartilhar', copyLink: 'Copiar link', faq: 'Perguntas frequentes', sources: 'Fontes', minRead: 'min de leitura', featured: 'Destaque · Artigo', readArticle: 'Ler o artigo', comingSoon: 'Em breve', inPrep: 'Novo artigo em preparação', soonText: 'Um e-mail por mês com os novos artigos e pesquisas.', getEmail: 'Receba por e-mail',
+  pt: { language: 'Idioma', chooseLanguage: 'Escolha um idioma', soonShort: 'em breve', kinds: { Guide: 'Guia', Article: 'Artigo', Checklist: 'Checklist', Template: 'Modelo', 'Case study': 'Estudo de caso' }, home: 'Início', blog: 'Blog', all: 'Todos', latest: 'Últimos artigos', onThisPage: 'Nesta página', share: 'Compartilhar', copyLink: 'Copiar link', faq: 'Perguntas frequentes', sources: 'Fontes', minRead: 'min de leitura', featured: 'Destaque · Artigo', readArticle: 'Ler o artigo', comingSoon: 'Em breve', inPrep: 'Novo artigo em preparação', soonText: 'Um e-mail por mês com os novos artigos e pesquisas.', getEmail: 'Receba por e-mail',
     topics: ['Operações de aprendizagem', 'Entrada e priorização de treinamentos', 'IA e produção de conteúdo', 'Modelos de design instrucional', 'Medindo o impacto do treinamento'] },
-  es: { kinds: { Guide: 'Guía', Article: 'Artículo', Checklist: 'Lista de verificación', Template: 'Plantilla', 'Case study': 'Caso de estudio' }, home: 'Inicio', blog: 'Blog', all: 'Todos', latest: 'Últimos artículos', onThisPage: 'En esta página', share: 'Compartir', copyLink: 'Copiar enlace', faq: 'Preguntas frecuentes', sources: 'Fuentes', minRead: 'min de lectura', featured: 'Destacado · Artículo', readArticle: 'Leer el artículo', comingSoon: 'Próximamente', inPrep: 'Nuevo artículo en preparación', soonText: 'Un correo al mes con los nuevos artículos e investigaciones.', getEmail: 'Recíbelo por correo',
+  es: { language: 'Idioma', chooseLanguage: 'Elige un idioma', soonShort: 'próximamente', kinds: { Guide: 'Guía', Article: 'Artículo', Checklist: 'Lista de verificación', Template: 'Plantilla', 'Case study': 'Caso de estudio' }, home: 'Inicio', blog: 'Blog', all: 'Todos', latest: 'Últimos artículos', onThisPage: 'En esta página', share: 'Compartir', copyLink: 'Copiar enlace', faq: 'Preguntas frecuentes', sources: 'Fuentes', minRead: 'min de lectura', featured: 'Destacado · Artículo', readArticle: 'Leer el artículo', comingSoon: 'Próximamente', inPrep: 'Nuevo artículo en preparación', soonText: 'Un correo al mes con los nuevos artículos e investigaciones.', getEmail: 'Recíbelo por correo',
     topics: ['Operaciones de aprendizaje', 'Recepción y priorización de capacitaciones', 'IA y producción de contenidos', 'Modelos de diseño instruccional', 'Medición del impacto de la capacitación'] },
-  fr: { kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Modèle', 'Case study': 'Étude de cas' }, home: 'Accueil', blog: 'Blog', all: 'Tous', latest: 'Derniers articles', onThisPage: 'Sur cette page', share: 'Partager', copyLink: 'Copier le lien', faq: 'Questions fréquentes', sources: 'Sources', minRead: 'min de lecture', featured: 'À la une · Article', readArticle: 'Lire l’article', comingSoon: 'Bientôt', inPrep: 'Nouvel article en préparation', soonText: 'Un e-mail par mois avec les nouveaux articles et études.', getEmail: 'Recevez-le par e-mail',
+  fr: { language: 'Langue', chooseLanguage: 'Choisir une langue', soonShort: 'bientôt', kinds: { Guide: 'Guide', Article: 'Article', Checklist: 'Checklist', Template: 'Modèle', 'Case study': 'Étude de cas' }, home: 'Accueil', blog: 'Blog', all: 'Tous', latest: 'Derniers articles', onThisPage: 'Sur cette page', share: 'Partager', copyLink: 'Copier le lien', faq: 'Questions fréquentes', sources: 'Sources', minRead: 'min de lecture', featured: 'À la une · Article', readArticle: 'Lire l’article', comingSoon: 'Bientôt', inPrep: 'Nouvel article en préparation', soonText: 'Un courriel par mois avec les nouveaux articles et études.', getEmail: 'Recevez-le par courriel',
     topics: ['Opérations d’apprentissage', 'Réception et priorisation des formations', 'IA et production de contenu', 'Modèles de conception pédagogique', 'Mesurer l’impact de la formation'] },
 };
 
@@ -193,11 +197,64 @@ function renderList(posts, T) {
 }
 
 // ---------------------------------------------------------------- build
-function renderPage(tpl, lang, posts) {
+function loadCatalog(lang) {
+  const f = path.join(ROOT, 'i18n', `${lang}.json`);
+  return fs.existsSync(f) ? JSON.parse(fs.readFileSync(f, 'utf8')) : null;
+}
+
+// Seletor de idioma (menu desktop, menu mobile e rodapé). Só linka idiomas que foram gerados.
+function switcher(out, lang, available) {
+  const T = STR[lang];
+  const href = (l) => (l === DEFAULT_LANG ? '/' : `/${l}/`);
+  const items = LANGS.map((l) => {
+    const code = l.toUpperCase();
+    if (l === lang) return `<li><a class="lang-i on" href="#" role="menuitem" aria-current="true" data-lang="${l}">${NATIVE[l]}<b>${code}</b></a></li>`;
+    if (available.includes(l)) return `<li><a class="lang-i" href="${href(l)}" role="menuitem" lang="${HTML_LANG[l]}" hreflang="${HTML_LANG[l]}" data-lang="${l}">${NATIVE[l]}<b>${code}</b></a></li>`;
+    return `<li><span class="lang-i off" role="menuitem" aria-disabled="true">${NATIVE[l]}<b>${code}</b><em>${esc(T.soonShort)}</em></span></li>`;
+  }).join('');
+  out = out.replace(/<ul class="lang-m" id="lang-m" role="menu" aria-label="[^"]*">[\s\S]*?<\/ul>/, `<ul class="lang-m" id="lang-m" role="menu" aria-label="${esc(T.chooseLanguage)}">${items}</ul>`);
+  out = out.replace(/(<button class="lang-b"[^>]*aria-label=")[^"]*(")/, `$1${esc(T.language)}: ${NATIVE[lang]}$2`);
+  out = out.replace(/(<button class="lang-b"[\s\S]*?<\/svg><span>)[A-Z]{2}(<\/span>)/, `$1${lang.toUpperCase()}$2`);
+  const ov = LANGS.map((l) => {
+    const code = l.toUpperCase();
+    if (l === lang) return `<a class="on" href="#" aria-current="true">${code}</a>`;
+    if (available.includes(l)) return `<a href="${href(l)}" lang="${HTML_LANG[l]}" hreflang="${HTML_LANG[l]}" data-lang="${l}">${code}</a>`;
+    return `<span class="off" title="${NATIVE[l]} · ${esc(T.soonShort)}">${code}<em>${esc(T.soonShort)}</em></span>`;
+  }).join('');
+  out = out.replace(/(<div class="ov-lang" aria-label=")[^"]*("><span class="ov-lk">)[^<]*(<\/span>)[\s\S]*?(<\/div>)/, `$1${esc(T.language)}$2${esc(T.language)}$3${ov}$4`);
+  out = out.replace(/<span><a href="#home" hreflang="en">EN<\/a>[\s\S]*?<\/span>/, `<span>${LANGS.map((l) => (available.includes(l) || l === lang ? `<a href="${l === lang ? '#home' : href(l)}" hreflang="${HTML_LANG[l]}"${l !== lang ? ` data-lang="${l}"` : ''}>${l.toUpperCase()}</a>` : l.toUpperCase())).join(' / ')}</span>`);
+  // ao trocar de idioma, mantém a página (hash) em que a pessoa está
+  out = out.replace('</body>', `<script>document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[data-lang]');if(!a||a.getAttribute('href')==='#')return;e.preventDefault();location.href=a.getAttribute('href')+location.hash;});</script></body>`);
+  return out;
+}
+
+// Ferramentas embutidas (iframes srcdoc): formatação de números, datas e moeda por idioma.
+// Os trechos são buscados na forma escapada em que estão no atributo srcdoc.
+const attrEsc = (t) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#x27;');
+const LOCALE = { es: 'es-ES', fr: 'fr-CA' };
+function patchTools(html, lang) {
+  const loc = LOCALE[lang];
+  if (!loc) return html;
+  const swap = (from, to, label) => {
+    const f = attrEsc(from);
+    if (!html.includes(f)) { console.warn(`aviso: trecho não encontrado nas ferramentas (${label}); a formatação em ${lang} pode ficar em estilo inglês.`); return; }
+    html = html.split(f).join(attrEsc(to));
+  };
+  // $1.2M / $250K  ->  1,2 M$ / 250 k$ (espaço insécable), com separadores do idioma
+  swap("const money = n => n >= 1e6 ? '$' + (n / 1e6).toFixed(n >= 1e7 ? 0 : 1) + 'M' : '$' + fmt(n / 1000) + 'K';",
+    `const money = n => n >= 1e6 ? (n / 1e6).toLocaleString('${loc}', {minimumFractionDigits: n >= 1e7 ? 0 : 1, maximumFractionDigits: n >= 1e7 ? 0 : 1}) + '\u00a0M$' : fmt(n / 1000) + '\u00a0k$';`, 'moeda da calculadora');
+  html = html.split(attrEsc("'en-US'")).join(attrEsc(`'${loc}'`));
+  html = html.split("'en-US'").join(`'${loc}'`); // contadores da página principal
+  html = html.split('&lt;html lang=&quot;en&quot;').join(`&lt;html lang=&quot;${HTML_LANG[lang]}&quot;`);
+  return html;
+}
+
+function renderPage(tpl, lang, posts, catalog, available) {
   const T = STR[lang];
   const recent = posts.slice(0, MENU_MAX);
+  const inLang = (p, html) => (p.lang === lang ? html : html);
   const parts = {
-    '<!--@blog-pages-->': posts.map((p) => renderArticle(p, T)).join(''),
+    '<!--@blog-pages-->': posts.map((p) => renderArticle(p, STR[p.lang])).join(''),
     '<!--@blog-list-->': renderList(posts, T),
     '<!--@blog-menu-->': recent.map((p, i) => `<li><a class="mm-i" style="--k:${4 + i}" href="#blog-${p.slug}"><b>${esc(p.menuTitle)}</b><span>${esc(p.menuSubtitle)}</span></a></li>`).join(''),
     '<!--@blog-overlay-->': recent.map((p) => `<li><a href="#blog-${p.slug}">${esc(p.menuTitle)}</a></li>`).join(''),
@@ -209,13 +266,15 @@ function renderPage(tpl, lang, posts) {
     out = out.split(marker).join(html);
   }
   if (lang !== DEFAULT_LANG) {
-    out = out.replace('<html lang="en">', `<html lang="${lang}">`);
+    out = out.replace('<html lang="en">', `<html lang="${HTML_LANG[lang]}">`);
     out = out.replace('<h2 class="h2 rv">Latest articles</h2>', `<h2 class="h2 rv">${esc(T.latest)}</h2>`);
     // botões de filtro do blog: mesmos data-t, rótulos traduzidos
     out = out.replace(/(<div class="filters bx-filters rv" id="blog-filters"[^>]*>)([\s\S]*?)(<\/div>)/, (m, a, inner, c) =>
       a + inner.replace(/(<button[^>]*data-t="([^"]+)"[^>]*>)([^<]*)(<\/button>)/g, (mm, o, t, label, cl) => o + esc(t === 'all' ? T.all : T.topics[Number(t)] ?? label) + cl) + c);
+    out = patchTools(out, lang);
+    if (catalog) out = translateHtml(out, catalog);
   }
-  return out;
+  return switcher(out, lang, available);
 }
 
 function build() {
@@ -224,30 +283,43 @@ function build() {
   const enBySlug = new Map(recs.filter((r) => r.lang === DEFAULT_LANG).map((r) => [r.slug, r]));
   const tpl = fs.readFileSync(path.join(ROOT, 'src/index.template.html'), 'utf8');
 
+  // posts publicados por idioma
+  const byLang = {};
+  const skippedBy = {};
+  for (const lang of LANGS) {
+    const posts = [];
+    skippedBy[lang] = 0;
+    for (const r of recs.filter((x) => x.lang === lang)) {
+      // tradução ainda em branco (o CMS pode criar o arquivo vazio): ignora sem erro
+      if (lang !== DEFAULT_LANG && !(r.fm.title && r.fm.summary && r.body)) { skippedBy[lang]++; continue; }
+      if (lang !== DEFAULT_LANG && !enBySlug.has(r.slug)) console.warn(`aviso: ${r.file} não tem a versão em inglês (${r.slug}.en.md); data e tópico precisam estar preenchidos nela.`);
+      const p = toPost(r, enBySlug.get(r.slug));
+      if (!p.draft) posts.push(p);
+    }
+    byLang[lang] = posts;
+  }
+  const catalogs = Object.fromEntries(LANGS.map((l) => [l, l === DEFAULT_LANG ? null : loadCatalog(l)]));
+  // idiomas com página: inglês sempre; os outros se o site foi traduzido (catálogo) ou se há posts nele
+  const available = LANGS.filter((l) => l === DEFAULT_LANG || catalogs[l] || byLang[l].length);
+
   fs.rmSync(OUT, { recursive: true, force: true });
   fs.mkdirSync(OUT, { recursive: true });
 
   const report = [];
   for (const lang of LANGS) {
-    const mine = recs.filter((r) => r.lang === lang);
-    let skipped = 0;
-    const posts = [];
-    for (const r of mine) {
-      // tradução ainda em branco (o CMS pode criar o arquivo vazio): ignora sem erro
-      if (lang !== DEFAULT_LANG && !(r.fm.title && r.fm.summary && r.body)) { skipped++; continue; }
-      if (lang !== DEFAULT_LANG && !enBySlug.has(r.slug)) console.warn(`aviso: ${r.file} não tem a versão em inglês (${r.slug}.en.md); data e tópico precisam estar preenchidos nela.`);
-      const p = toPost(r, enBySlug.get(r.slug));
-      if (!p.draft) posts.push(p);
-    }
+    if (!available.includes(lang)) { report.push(`${lang}: sem tradução do site e sem posts, página não gerada`); continue; }
+    // posts do idioma + posts em inglês que ainda não foram traduzidos para ele (aparecem em inglês)
+    const have = new Set(byLang[lang].map((p) => p.slug));
+    const posts = [...byLang[lang], ...(lang === DEFAULT_LANG ? [] : byLang[DEFAULT_LANG].filter((p) => !have.has(p.slug)))];
     posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
-    if (!posts.length && lang !== DEFAULT_LANG) { report.push(`${lang}: nenhum post publicado, página não gerada`); continue; }
-    const out = renderPage(tpl, lang, posts);
+    const out = renderPage(tpl, lang, posts, catalogs[lang], available);
     const dir = lang === DEFAULT_LANG ? OUT : path.join(OUT, lang);
     fs.mkdirSync(dir, { recursive: true });
     fs.writeFileSync(path.join(dir, 'index.html'), out);
     const feat = posts.find((x) => x.featured) || posts[0];
-    report.push(`${lang}: ${posts.length} post(s) → ${lang === DEFAULT_LANG ? 'dist/index.html' : `dist/${lang}/index.html`}${skipped ? `, ${skipped} tradução(ões) em branco ignorada(s)` : ''}`);
-    for (const p of posts) report.push(`    - ${p.date}  #blog-${p.slug}${p === feat ? '  (destaque)' : ''}`);
+    const nTr = byLang[lang].length;
+    report.push(`${lang}: ${posts.length} post(s)${lang !== DEFAULT_LANG ? ` (${nTr} traduzido(s), ${posts.length - nTr} em inglês)` : ''}${catalogs[lang] ? `, site traduzido (${Object.keys(catalogs[lang]).length} textos)` : ''} → ${lang === DEFAULT_LANG ? 'dist/index.html' : `dist/${lang}/index.html`}${skippedBy[lang] ? `, ${skippedBy[lang]} tradução(ões) em branco ignorada(s)` : ''}`);
+    for (const p of posts) report.push(`    - ${p.date}  #blog-${p.slug}${p.lang !== lang ? `  [${p.lang}]` : ''}${p === feat ? '  (destaque)' : ''}`);
   }
 
   for (const dir of ['admin', 'uploads']) {
