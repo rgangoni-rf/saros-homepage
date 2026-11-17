@@ -7756,16 +7756,6 @@ body:not(.on-home) #pill{display:none!important}
   document.getElementById('prog').addEventListener('click', e => { e.preventDefault(); window.__lenis ? __lenis.scrollTo(0) : scrollTo({ top: 0, behavior: 'smooth' }); });
 })();
 </script>
-<script>
-(function(){var l=document.getElementById('lang');if(!l)return;var b=l.querySelector('.lang-b');
-function set(o){l.classList.toggle('open',o);b.setAttribute('aria-expanded',o?'true':'false');}
-b.addEventListener('click',function(e){e.stopPropagation();set(!l.classList.contains('open'));});
-l.querySelectorAll('.lang-i.on').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();set(false);});});
-document.addEventListener('click',function(e){if(!l.contains(e.target))set(false);});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'){set(false);}});
-document.querySelectorAll('.ov-lang a.on').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();});});
-})();
-</script>
 <script>addEventListener('message', e => { if (e.data && e.data.sarosCalcH) document.querySelectorAll('.calc-frame').forEach(f => { if (f.contentWindow === e.source) f.style.height = e.data.sarosCalcH + 'px'; }); });</script>
 <script>addEventListener('message', e => { if (!e.data || e.data.sarosFrameScroll === undefined) return; const f = [...document.querySelectorAll('iframe')].find(x => x.contentWindow === e.source); if (!f) return; const y = f.getBoundingClientRect().top + scrollY + e.data.sarosFrameScroll - 100; window.__lenis ? __lenis.scrollTo(y) : scrollTo({ top: y, behavior: 'smooth' }); });</script>
 <script>
