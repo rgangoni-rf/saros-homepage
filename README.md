@@ -1,6 +1,6 @@
 # Saros Homepage v3
 
-Site estático publicado no **Cloudflare Pages** (e ainda no GitHub Pages, pelo workflow em `.github/workflows`).
+Site estático publicado no **Cloudflare Pages**.
 
 ## Como o site é montado
 - `src/index.template.html`: o site inteiro, com marcadores `<!--@blog-...-->` onde entram os artigos, a listagem, os menus e o sitemap do blog.
