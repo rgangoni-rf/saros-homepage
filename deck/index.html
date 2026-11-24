@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Saros: a plataforma de operações de T&amp;D que descobre, entende o padrão e recomenda o aprendizado de melhor desempenho.">
+<meta property="og:title" content="Saros — Predição e impacto">
+<meta property="og:description" content="Saros descobre, entende o padrão e recomenda o aprendizado de melhor desempenho.">
+<meta property="og:url" content="https://sarosops.com/deck/">
+<meta name="theme-color" content="#000000">
+<title>Saros — Predição e impacto</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --orange:#ff5b00;--orange-2:#f45100;--amber:#f78c00;--deep:#9e3500;
+  --black:#000;--white:#fff;--azul:#eef3fb;--grafite:#4a5263;--gclaro:#c9d1de;
+  --sub-l:#757575;--sub-d:#8a8a8a;--card-d:#141413;
+  --ease:cubic-bezier(.2,.75,.15,1);
+  --sans:"Plus Jakarta Sans","Helvetica Neue",Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:#000;overflow:hidden;font-family:var(--sans);-webkit-font-smoothing:antialiased}
+p,h1,h2,h3,ul{margin:0}
+button{font-family:inherit}
+#viewport{position:fixed;inset:0;background:#000}
+.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform-origin:50% 50%;overflow:hidden;background:#000}
+
+/* ---------- slides ---------- */
+.slide{position:absolute;inset:0;overflow:hidden;opacity:0;visibility:hidden;transition:opacity .7s var(--ease),visibility 0s linear .7s;color:var(--black);background:var(--white)}
+.slide.on{opacity:1;visibility:visible;transition:opacity .7s var(--ease)}
+.slide.dark{background:var(--black);color:var(--white)}
+.slide.alt{background:var(--azul)}
+.pad{position:absolute;left:160px;right:160px;top:176px;bottom:150px;display:flex;flex-direction:column}
+
+.hd{position:absolute;left:160px;right:160px;top:64px;display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:400;color:var(--sub-l);letter-spacing:.01em}
+.dark .hd{color:var(--sub-d)}
+.hd .sec{display:flex;align-items:center;gap:14px}
+.hd .sec::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--orange)}
+.ft{position:absolute;left:160px;right:160px;bottom:56px;display:flex;align-items:center;gap:36px;color:var(--black)}
+.dark .ft{color:var(--white)}
+.ft .logo{height:26px;width:153px;flex:none}
+.ft .legal{flex:1;font-size:18px;font-weight:300;color:var(--sub-l)}
+.dark .ft .legal{color:var(--sub-d)}
+.ft .pg{font-size:20px;font-weight:500;color:var(--sub-l);font-variant-numeric:tabular-nums}
+.dark .ft .pg{color:var(--sub-d)}
+
+.eyebrow{font-size:24px;font-weight:500;letter-spacing:.36em;text-transform:uppercase;color:var(--deep);margin-bottom:28px}
+.dark .eyebrow{color:var(--orange)}
+.kicker{font-size:24px;font-weight:500;letter-spacing:.42em;text-transform:lowercase;color:var(--orange)}
+.h2{font-size:60px;font-weight:600;line-height:1.1;letter-spacing:-.03em;max-width:1500px}
+.lead{font-size:34px;font-weight:300;line-height:1.35;color:var(--grafite);max-width:1300px;margin-top:24px}
+.dark .lead{color:var(--gclaro)}
+.hl{color:var(--orange)}
+
+/* ---------- entrance animations (replay on each visit) ---------- */
+[data-a]{opacity:0}
+.in [data-a="rise"]{animation:rise 1s var(--ease) var(--d,0s) both}
+.in [data-a="fade"]{animation:fade 1.2s var(--ease) var(--d,0s) both}
+.in [data-a="log"]{animation:logIn .7s var(--ease) var(--d,0s) both}
+.in [data-a="dash"]{animation:dashIn 1.3s var(--ease) var(--d,0s) both}
+@keyframes rise{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:none}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes logIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@keyframes dashIn{from{opacity:0;transform:translateY(90px)}to{opacity:1;transform:none}}
+
+/* ---------- sky + eclipse (from the site hero) ---------- */
+.sky{position:absolute;inset:0;pointer-events:none}
+.stars{position:absolute;inset:-40%;background-image:radial-gradient(1px 1px at 12% 22%,rgba(255,255,255,.55),transparent 60%),radial-gradient(1px 1px at 72% 12%,rgba(255,255,255,.45),transparent 60%),radial-gradient(1.5px 1.5px at 38% 68%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1px 1px at 88% 58%,rgba(255,255,255,.4),transparent 60%),radial-gradient(1px 1px at 52% 34%,rgba(255,255,255,.3),transparent 60%),radial-gradient(1px 1px at 22% 84%,rgba(255,255,255,.35),transparent 60%),radial-gradient(1.5px 1.5px at 64% 88%,rgba(255,255,255,.3),transparent 60%);background-size:620px 620px;animation:drift 90s linear infinite}
+@keyframes drift{to{transform:translate3d(-620px,-620px,0)}}
+.burst{position:absolute;left:50%;width:var(--D);height:var(--D);margin-left:calc(var(--D) / -2)}
+.burst .sph{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 100%,#1b0b02 0%,#070606 30%,#000 60%)}
+.burst .rim{position:absolute;inset:0;border-radius:50%;box-shadow:0 1.5px 0 0 rgba(255,226,204,.95),0 0 16px 2px rgba(255,140,60,.7),0 0 70px 8px rgba(255,91,0,.42),0 30px 220px 50px rgba(255,91,0,.2)}
+.in .burst .rim{animation:rimIn 2s var(--ease) .15s both}
+.burst .glare{position:absolute;left:50%;top:100%;width:44%;height:15%;transform:translate(-50%,-50%);background:radial-gradient(50% 50% at 50% 50%,#fffaf4 0%,rgba(255,196,140,.95) 9%,rgba(255,116,36,.6) 26%,rgba(255,91,0,.18) 50%,rgba(255,91,0,0) 72%);mix-blend-mode:screen}
+.in .burst .glare{animation:glareIn 2.2s var(--ease) .25s both}
+.burst .glare::after{content:"";position:absolute;left:-40%;right:-40%;top:50%;height:2px;margin-top:-1px;background:linear-gradient(90deg,rgba(255,200,160,0),rgba(255,236,220,.9) 50%,rgba(255,200,160,0))}
+@keyframes rimIn{from{opacity:0}}
+@keyframes glareIn{from{opacity:0;transform:translate(-50%,-50%) scale(.25)}}
+.rays{position:absolute;left:50%;top:100%;width:0;height:0}
+.ray{position:absolute;left:0;top:0;width:var(--l);height:var(--w);margin-top:calc(var(--w) / -2);border-radius:2px;transform-origin:0 50%;transform:rotate(var(--a)) translateX(var(--o));background:linear-gradient(90deg,rgba(255,242,230,.95),rgba(255,140,60,.75) 28%,rgba(255,91,0,.22) 70%,rgba(255,91,0,0));opacity:var(--op,.85)}
+.in .ray{animation:rayIn 1.6s var(--ease) var(--d) both,rayPulse 6s ease-in-out var(--d2) infinite}
+@keyframes rayIn{from{transform:rotate(var(--a)) translateX(var(--o)) scaleX(0);opacity:0}}
+@keyframes rayPulse{50%{opacity:calc(var(--op,.85) * .45)}}
+.ray i{position:absolute;top:50%;left:0;width:36px;height:2px;margin-top:-1px;border-radius:2px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff);box-shadow:0 0 8px 1px rgba(255,180,120,.85);opacity:0;animation:pk var(--t) linear var(--d3) infinite}
+@keyframes pk{0%{transform:translateX(0);opacity:0}10%{opacity:1}85%{opacity:.9}100%{transform:translateX(calc(var(--l) - 36px));opacity:0}}
+.orb-ring{position:absolute;border-radius:50%;border:1px dashed rgba(201,209,222,.16);animation:orbspin 180s linear infinite}
+.orb-ring.r1{inset:-4.5%}
+.orb-ring.r2{inset:-10%;border-style:solid;border-color:rgba(201,209,222,.08);animation-duration:260s;animation-direction:reverse}
+.orb-ring i{position:absolute;left:50%;bottom:-5px;width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px rgba(255,91,0,.9)}
+@keyframes orbspin{to{transform:rotate(360deg)}}
+
+/* ---------- cover ---------- */
+#s1 .burst{--D:2600px;top:330px;margin-top:-2600px}
+#s1 .topbar{position:absolute;left:160px;right:160px;top:64px;display:flex;justify-content:space-between;align-items:center;color:#fff}
+#s1 .topbar .logo{width:212px;height:36px}
+#s1 .topbar span{font-size:22px;color:var(--sub-d)}
+#s1 .hero{position:absolute;z-index:1;isolation:isolate;left:220px;right:220px;top:420px;display:flex;flex-direction:column;align-items:center;text-align:center;gap:34px;color:#fff}
+#s1 .hero::before{content:"";position:absolute;left:-10%;right:-10%;top:-80px;bottom:-60px;z-index:-1;background:radial-gradient(50% 50% at 50% 50%,rgba(0,0,0,.82) 0%,rgba(0,0,0,.6) 55%,rgba(0,0,0,0) 100%)}
+#s1 h1{font-size:62px;line-height:1.08;letter-spacing:-.035em;font-weight:700;max-width:1440px}
+#s1 .sub{font-size:30px;line-height:1.45;font-weight:300;color:var(--gclaro);max-width:1180px}
+.marquee{position:absolute;left:0;right:0;bottom:56px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.marquee-track{display:flex;gap:56px;width:max-content;animation:marq 48s linear infinite}
+.marquee-track span{display:flex;align-items:center;gap:18px;font-size:22px;color:var(--gclaro);white-space:nowrap}
+.marquee-track span::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 10px rgba(255,91,0,.8)}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* ---------- cards ---------- */
+.cards{display:grid;gap:28px}
+.card{background:var(--azul);border-radius:16px;padding:40px 36px;display:flex;flex-direction:column;gap:18px;position:relative}
+.alt .card{background:var(--white)}
+.dark .card{background:var(--card-d);box-shadow:inset 0 1px 0 0 rgba(255,255,255,.14)}
+.card .n{font-size:20px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;color:var(--deep)}
+.dark .card .n{color:var(--orange)}
+.card h3{font-size:34px;font-weight:600;line-height:1.18;letter-spacing:-.015em}
+.card .t{font-size:25px;line-height:1.45;color:var(--grafite)}
+.dark .card .t{color:var(--gclaro)}
+
+/* signals */
+#s2 .cards{grid-template-columns:repeat(4,1fr);margin-top:48px}
+#s2 .card h3{font-size:30px}
+#s2 .card .t{font-size:23px}
+.sig{position:absolute;right:36px;top:44px;width:12px;height:12px;border-radius:50%;background:var(--orange)}
+.in .sig{animation:ping 1.8s ease-out var(--d,0s) infinite}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(255,91,0,.7)}80%,100%{box-shadow:0 0 0 14px rgba(255,91,0,0)}}
+.pattern{margin-top:40px;display:flex;align-items:center;gap:28px}
+.pattern svg{flex:1;min-width:400px;height:24px;overflow:visible}
+.pattern .base{stroke:var(--gclaro);stroke-width:2}
+.pattern .pulse{stroke:var(--orange);stroke-width:3;stroke-linecap:round;stroke-dasharray:70 2000;stroke-dashoffset:70;filter:drop-shadow(0 0 6px rgba(255,91,0,.6))}
+.in .pattern .pulse{animation:sigPulse 2.6s cubic-bezier(.45,0,.55,1) 1.4s infinite}
+@keyframes sigPulse{from{stroke-dashoffset:70}to{stroke-dashoffset:-1400}}
+.pattern p{font-size:28px;font-weight:500;max-width:760px;line-height:1.35}
+.pill{display:inline-flex;align-items:center;gap:12px;border-radius:999px;padding:12px 28px;font-size:22px;font-weight:600;line-height:1.3;background:var(--black);color:var(--white);max-width:860px;flex:none}
+.pill::before{flex:none}
+.pill::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--orange)}
+
+/* stats */
+#s3 .cards{grid-template-columns:repeat(4,1fr);margin-top:48px}
+#s3 .card .t{font-size:23px}
+.stat{font-size:80px;font-weight:500;letter-spacing:-.04em;line-height:1;color:var(--black);font-variant-numeric:tabular-nums}
+.stat small{font-size:.5em;letter-spacing:-.01em;margin-right:8px}
+.bars{display:flex;gap:18px;align-items:flex-end;margin-top:4px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;gap:10px}
+.bar b{display:block;border-radius:8px 8px 0 0;background:var(--gclaro);height:var(--h);transform-origin:bottom}
+.bar.now b{background:var(--orange)}
+.in .bar b{animation:grow 1.4s var(--ease) var(--d,.6s) both}
+@keyframes grow{from{transform:scaleY(0)}}
+.bar span{font-size:17px;color:var(--grafite);display:flex;justify-content:space-between;gap:8px;white-space:nowrap}
+.source{margin-top:auto;font-size:20px;font-weight:300;color:var(--sub-l)}
+
+/* cycle */
+#s4 .lead{max-width:1250px}
+.cycle{position:relative;margin-top:72px}
+.cycle .line{position:absolute;left:114px;right:114px;top:56px;height:2px;background:linear-gradient(90deg,rgba(201,209,222,.15),rgba(201,209,222,.4),rgba(255,91,0,.6))}
+.cycle .bead{position:absolute;left:114px;top:51px;width:12px;height:12px;border-radius:50%;background:var(--orange);box-shadow:0 0 14px 3px rgba(255,91,0,.85);opacity:0}
+.in .cycle .bead{animation:beadMove 4.8s cubic-bezier(.45,0,.55,1) 2.2s infinite}
+@keyframes beadMove{0%{transform:translateX(0);opacity:0}8%{opacity:1}88%{opacity:1}100%{transform:translateX(1372px);opacity:0}}
+.stages{display:grid;grid-template-columns:repeat(7,1fr);position:relative}
+.stage-i{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px}
+.moon{width:112px;height:112px;border-radius:50%;position:relative;overflow:hidden;background:radial-gradient(circle at 36% 30%,#fff 0%,#e4e4e4 45%,#8d8d8d 100%);margin-bottom:14px}
+.moon .m{position:absolute;inset:-1px;border-radius:50%;background:#000;transform:translateX(-170%)}
+.in .moon .m{animation:moonTo 1.1s cubic-bezier(.5,0,.15,1) var(--d) forwards}
+@keyframes moonTo{to{transform:translateX(var(--x))}}
+.moon.total{overflow:visible;background:#000}
+.moon.total::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(255,200,160,.9),0 0 22px 4px rgba(255,140,60,.75),0 0 70px 14px rgba(255,91,0,.45);opacity:0}
+.in .moon.total::after{animation:fade .9s var(--ease) 2s forwards,breath 6s ease-in-out 3s infinite}
+@keyframes breath{50%{transform:scale(1.06);opacity:.75}}
+.stage-i .n{font-size:20px;font-weight:600;letter-spacing:.2em;color:var(--orange)}
+.stage-i h3{font-size:28px;font-weight:600;letter-spacing:-.01em}
+.stage-i p{font-size:20px;line-height:1.35;color:var(--gclaro);max-width:200px}
+.record{margin-top:44px;align-self:flex-start;display:flex;align-items:center;gap:18px;padding:16px 26px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(20,20,19,.55);font-size:21px;color:var(--gclaro)}
+.record b{color:#fff;font-weight:600}
+.record i{width:9px;height:9px;border-radius:50%;background:var(--orange);animation:ping 1.8s ease-out infinite}
+
+/* AI */
+#s5 .cards{grid-template-columns:1fr 1fr;margin-top:40px}
+#s5 .card{padding:32px 34px}
+.dots{display:grid;grid-template-columns:repeat(6,32px);gap:14px;margin:6px 0 4px}
+.dots i{width:32px;height:32px;border-radius:50%;border:2px solid var(--gclaro);display:block}
+.in .dots i{animation:lit .5s var(--ease) var(--d) forwards}
+.dots i:first-child{border-color:var(--orange)}
+@keyframes lit{to{background:var(--orange);border-color:var(--orange);box-shadow:0 0 14px rgba(255,91,0,.45)}}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin-top:auto}
+.chip{font-size:20px;font-weight:500;padding:8px 20px;border-radius:999px;background:var(--white);color:var(--black);border:1px solid #dfe5ef}
+.track{margin-top:6px;border-radius:12px;background:var(--white);border:1px solid #dfe5ef;overflow:hidden}
+.track .th{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;font-size:19px;color:var(--grafite);border-bottom:1px solid #e6ebf3}
+.track .th b{color:var(--black);font-weight:600}
+.badge{font-size:16px;font-weight:600;padding:5px 12px;border-radius:999px;background:#00bc4c;color:#000}
+.trow{display:grid;grid-template-columns:44px 1fr auto;align-items:center;gap:14px;padding:15px 22px;border-bottom:1px solid #eef2f8;font-size:21px}
+.trow:last-child{border-bottom:none}
+.trow .k{font-size:17px;font-weight:600;color:var(--deep);letter-spacing:.08em}
+.trow .f{font-size:17px;font-weight:500;padding:5px 14px;border-radius:999px;background:var(--azul);color:var(--grafite)}
+.trow .f.prod{background:#fff0e6;color:var(--deep)}
+.sample{font-size:17px;color:var(--sub-l);letter-spacing:.04em}
+
+/* results */
+#s6 .grid{display:grid;grid-template-columns:1fr 680px;gap:64px;align-items:end}
+.chart{position:relative;height:330px;border-radius:16px;background:var(--card-d);box-shadow:inset 0 1px 0 0 rgba(255,255,255,.14);padding:22px}
+.chart svg{width:100%;height:100%;overflow:visible}
+.chart .grid-l{stroke:rgba(255,255,255,.06)}
+.chart .baseline{stroke:var(--gclaro);stroke-width:2;stroke-dasharray:8 8;opacity:.6}
+.chart .kpi{fill:none;stroke:var(--orange);stroke-width:4;stroke-linecap:round;stroke-dasharray:900;stroke-dashoffset:900;filter:drop-shadow(0 0 8px rgba(255,91,0,.55))}
+.in .chart .kpi{animation:draw 2.2s var(--ease) .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.chart .pt{fill:#000;stroke:var(--orange);stroke-width:3;opacity:0}
+.in .chart .pt{animation:fade .5s var(--ease) var(--d) forwards}
+.chart text{font-family:var(--sans);font-size:17px;fill:var(--gclaro)}
+.chart .tag{position:absolute;right:22px;top:18px;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub-d)}
+#s6 .cards{grid-template-columns:repeat(4,1fr);margin-top:56px}
+#s6 .card{padding:32px 30px}
+#s6 .card h3{font-size:27px}
+#s6 .card .t{font-size:22px}
+
+/* implementation */
+.tl{position:relative;margin-top:84px;height:30px}
+.tl .trk{position:absolute;left:0;right:0;top:13px;height:4px;border-radius:4px;background:#e3e8f1}
+.tl .fill{position:absolute;left:0;right:0;top:13px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--orange-2),var(--orange),var(--amber));transform-origin:left;transform:scaleX(0)}
+.in .tl .fill{animation:fillX 2.6s var(--ease) .5s forwards}
+@keyframes fillX{to{transform:scaleX(1)}}
+.tl .mk{position:absolute;top:3px;width:24px;height:24px;margin-left:-12px;border-radius:50%;background:var(--white);border:3px solid #d5dbe6}
+.in .tl .mk{animation:mk .4s var(--ease) var(--d) forwards}
+@keyframes mk{to{border-color:var(--orange);background:var(--orange);box-shadow:0 0 0 6px rgba(255,91,0,.15)}}
+#s8 .cards{grid-template-columns:repeat(3,1fr);margin-top:40px}
+#s8 .card ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:16px}
+#s8 .card li{font-size:25px;line-height:1.4;color:var(--grafite);display:flex;gap:16px}
+#s8 .card li::before{content:"";flex:none;width:9px;height:9px;border-radius:50%;background:var(--orange);margin-top:13px}
+
+/* reframe */
+#s9 .cards{grid-template-columns:repeat(4,1fr);margin-top:56px}
+#s9 .stat{color:var(--orange);font-size:84px}
+.clients{margin-top:40px;display:flex;align-items:center;gap:40px}
+.clients>p{font-size:22px;color:var(--sub-d);white-space:nowrap}
+.clients .marquee{position:relative;bottom:auto;flex:1}
+.clients .marquee-track{animation-duration:30s;gap:72px}
+.clients .marquee-track span{font-size:34px;font-weight:600;color:#fff;letter-spacing:-.01em}
+.clients .marquee-track span::before{width:6px;height:6px;background:var(--grafite);box-shadow:none}
+.cocreator{position:absolute;right:160px;top:176px;display:flex;align-items:center;gap:16px;font-size:21px;color:var(--gclaro)}
+.cocreator .rf{width:190px;height:29px}
+
+/* demo */
+#s10 .total{position:absolute;right:170px;top:50%;width:560px;height:560px;margin-top:-280px}
+#s10 .total .disc{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 50% 50%,#050404 0%,#000 70%)}
+#s10 .total .corona{position:absolute;inset:-34%;border-radius:50%;background:radial-gradient(circle,rgba(255,91,0,0) 36%,rgba(255,120,40,.55) 38%,rgba(255,91,0,.22) 46%,rgba(255,91,0,.06) 60%,rgba(255,91,0,0) 70%)}
+.in #s10-corona{animation:fade 1.6s var(--ease) .4s both,breath 6s ease-in-out 2s infinite}
+#s10 .total .ring{position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 2px rgba(255,226,204,.95),0 0 18px 3px rgba(255,140,60,.8),0 0 80px 14px rgba(255,91,0,.5)}
+#s10 .total .rays{top:50%}
+#s10 .orb-ring.r1{inset:-22%}
+#s10 .orb-ring.r2{inset:-42%}
+#s10 .copy{position:absolute;left:160px;top:170px;width:980px;display:flex;flex-direction:column;gap:30px;color:#fff}
+#s10 h2{font-size:80px;font-weight:700;line-height:1.02;letter-spacing:-.045em}
+#s10 .sub{font-size:30px;line-height:1.45;font-weight:300;color:var(--gclaro)}
+.steps{display:flex;flex-direction:column;gap:14px;margin-top:6px}
+.steps div{display:flex;align-items:center;gap:22px;font-size:27px}
+.steps b{width:46px;height:46px;flex:none;border-radius:50%;border:1px solid rgba(255,255,255,.25);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--orange)}
+.btn{align-self:flex-start;display:inline-flex;align-items:center;gap:18px;min-height:84px;padding:18px 40px;border-radius:999px;background:var(--orange);color:#000;font-weight:700;font-size:32px;letter-spacing:-.01em;text-decoration:none;margin-top:14px;transition:transform .3s var(--ease),background .3s var(--ease)}
+.btn:hover{background:var(--orange-2);transform:translateY(-2px)}
+.btn .dot{width:12px;height:12px;border-radius:50%;background:currentColor}
+.tagline{position:absolute;left:160px;bottom:118px;font-size:22px;color:var(--sub-d)}
+
+/* ---------- UI ---------- */
+.ui{position:fixed;z-index:10;display:flex;align-items:center;gap:6px;padding:6px;border-radius:999px;background:rgba(20,20,19,.72);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.12);transition:opacity .4s var(--ease),transform .4s var(--ease)}
+.ui.hide{opacity:0;pointer-events:none}
+#langs{top:18px;right:18px}
+#nav{bottom:18px;left:50%;transform:translateX(-50%)}
+#nav.hide{transform:translateX(-50%) translateY(10px)}
+.ui button{appearance:none;border:0;background:transparent;color:#c9d1de;font-size:13px;font-weight:600;letter-spacing:.08em;min-width:44px;height:36px;padding:0 12px;border-radius:999px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.ui button:hover{color:#fff;background:rgba(255,255,255,.08)}
+.ui button[aria-pressed="true"]{background:var(--orange);color:#000}
+.ui button:focus-visible{outline:2px solid #fff;outline-offset:2px}
+.ui svg{width:16px;height:16px}
+#count{font-size:13px;color:#c9d1de;min-width:72px;text-align:center;font-variant-numeric:tabular-nums;letter-spacing:.06em}
+#bar{position:fixed;left:0;top:0;height:3px;background:var(--orange);box-shadow:0 0 10px rgba(255,91,0,.7);transition:width .7s var(--ease);z-index:11}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.001s!important;animation-iteration-count:1!important;transition-duration:.001s!important}
+  .stars,.marquee-track,.orb-ring{animation:none!important}
+}
+
+/* ---------- v2: prediction + measurement ---------- */
+#s2 .cards{grid-template-columns:1fr 1fr 1.15fr;margin-top:56px}
+#s2 .card .t{font-size:24px}
+#s2 .big{font-size:128px;font-weight:500;letter-spacing:-.05em;line-height:.95;color:var(--black);font-variant-numeric:tabular-nums}
+#s2 .quote{background:var(--black);color:#fff}
+#s2 .quote h3{font-size:40px;line-height:1.15}
+#s2 .quote .t{color:var(--gclaro)}
+#s2 .quote .n{color:var(--orange)}
+
+/* method: record -> history -> pattern */
+#s3 .cols{display:grid;grid-template-columns:720px 1fr;gap:80px;align-items:start;margin-top:8px}
+#s3 .lead{font-size:30px;max-width:720px}
+.trio{display:flex;flex-direction:column;gap:22px;margin-top:44px}
+.trio div{display:grid;grid-template-columns:56px 1fr;gap:20px;align-items:center}
+.trio b{width:56px;height:56px;border-radius:50%;border:1px solid rgba(255,255,255,.22);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:600;color:var(--orange)}
+.trio h3{font-size:30px;font-weight:600}
+.trio p{font-size:23px;color:var(--gclaro);margin-top:2px}
+.field{position:relative;height:600px;border-radius:24px;background:var(--card-d);box-shadow:inset 0 1px 0 0 rgba(255,255,255,.14);overflow:hidden}
+.field svg{position:absolute;inset:0;width:100%;height:100%}
+.field circle{fill:#3a3f48;opacity:0}
+.in .field circle{animation:dotA .5s var(--ease) var(--d) forwards}
+.in .field circle.p{animation:dotA .5s var(--ease) var(--d) forwards,dotP .7s var(--ease) var(--d2) forwards}
+@keyframes dotA{from{opacity:0;transform:scale(.2)}to{opacity:1;transform:none}}
+@keyframes dotP{to{fill:#ff5b00;filter:drop-shadow(0 0 6px rgba(255,91,0,.8))}}
+.field circle{transform-box:fill-box;transform-origin:center}
+.field .lbl{position:absolute;display:flex;align-items:center;gap:10px;padding:10px 18px;border-radius:22px;max-width:330px;line-height:1.25;background:rgba(0,0,0,.78);border:1px solid rgba(255,91,0,.45);font-size:19px;font-weight:500;color:#fff;white-space:normal;width:max-content}
+.field .lbl::before{flex:none;content:"";width:8px;height:8px;border-radius:50%;background:var(--orange)}
+.field .cap{position:absolute;left:28px;bottom:22px;font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub-d)}
+.field .ctr{position:absolute;right:28px;top:24px;text-align:right}
+.field .ctr b{display:block;font-size:44px;font-weight:500;color:#fff;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.field .ctr span{font-size:16px;letter-spacing:.12em;text-transform:uppercase;color:var(--sub-d)}
+
+/* prediction mock */
+#s4 .mock{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-top:44px}
+.panel{border-radius:16px;background:var(--azul);padding:30px 32px;display:flex;flex-direction:column;gap:16px}
+.panel .ph{display:flex;justify-content:space-between;align-items:center}
+.panel .ph p{font-size:18px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--deep)}
+.panel .ph span{font-size:18px;color:var(--grafite)}
+.panel h3{font-size:32px;font-weight:600;letter-spacing:-.01em}
+.ctx{font-size:19px;color:var(--grafite)}
+.sk{display:flex;flex-direction:column;gap:4px;background:#fff;border-radius:12px;padding:8px 22px;border:1px solid #dfe5ef}
+.sk .row{display:grid;grid-template-columns:250px 1fr 104px;gap:18px;align-items:center;padding:10px 0;border-bottom:1px solid #eef2f8;font-size:21px}
+.sk .row:last-child{border-bottom:none}
+.sk .row.hd2{font-size:16px;letter-spacing:.1em;text-transform:uppercase;color:var(--sub-l);padding:8px 0}
+.sk .bar2{height:10px;border-radius:10px;background:#e6ebf3;overflow:hidden}
+.sk .bar2 i{display:block;height:100%;width:var(--w);border-radius:10px;background:var(--grafite);transform-origin:left;transform:scaleX(0)}
+.sk .bar2 i.low{background:var(--orange)}
+.in .sk .bar2 i{animation:fillX 1.2s var(--ease) var(--d) forwards}
+.sk .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--grafite);font-size:19px}
+.sk .v.none{color:var(--deep);font-weight:600}
+.trk2{background:#fff;border:1px solid #dfe5ef;border-radius:12px;padding:22px 24px;display:flex;flex-direction:column;gap:10px;position:relative}
+.trk2.hot{border:2px solid var(--orange);box-shadow:0 10px 30px -12px rgba(255,91,0,.45)}
+.trk2 h4{margin:0;font-size:24px;font-weight:600}
+.trk2 p{font-size:20px;line-height:1.4;color:var(--grafite)}
+.trk2 .meta{display:flex;justify-content:space-between;align-items:center;font-size:18px;color:var(--grafite)}
+.kpi-pill{position:absolute;right:20px;top:-16px;font-size:16px;font-weight:700;padding:6px 14px;border-radius:999px;background:var(--orange);color:#000}
+.in .kpi-pill{animation:ping 1.8s ease-out 2.2s infinite}
+
+/* measurement */
+.mchart{position:relative;margin-top:36px;height:350px;border-radius:20px;background:var(--card-d);box-shadow:inset 0 1px 0 0 rgba(255,255,255,.14);padding:26px 40px}
+.mchart svg{width:100%;height:100%;overflow:visible}
+.mchart .baseline{stroke:var(--gclaro);stroke-width:2;stroke-dasharray:8 8;opacity:.55}
+.mchart .area{fill:url(#ga);opacity:0}
+.in .mchart .area{animation:fade 1.2s var(--ease) 2.6s forwards}
+.mchart .kpi{fill:none;stroke:var(--orange);stroke-width:4;stroke-linecap:round;stroke-dasharray:1700;stroke-dashoffset:1700;filter:drop-shadow(0 0 8px rgba(255,91,0,.55))}
+.in .mchart .kpi{animation:draw 2.6s var(--ease) .8s forwards}
+.mchart .vline{stroke:rgba(255,255,255,.14);stroke-width:1;stroke-dasharray:3 6}
+.mchart .pt{fill:#000;stroke:var(--orange);stroke-width:3;opacity:0}
+.in .mchart .pt{animation:fade .5s var(--ease) var(--d) forwards}
+.mchart .tag{position:absolute;right:28px;top:20px;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--sub-d)}
+.mchart .st{position:absolute;bottom:22px;display:flex;flex-direction:column;gap:6px;width:300px}
+.mchart .st:last-child{width:380px}
+.mchart .st b{font-size:16px;font-weight:600;letter-spacing:.16em;color:var(--orange)}
+.mchart .st span{font-size:20px;line-height:1.3;color:#fff}
+.mchart .rec{position:absolute;left:40px;top:22px}
+#s5 .cards{grid-template-columns:repeat(3,1fr);margin-top:28px}
+#s5 .card{padding:28px 30px;gap:10px}
+#s5 .card h3{font-size:27px}
+#s5 .card .t{font-size:22px}
+
+/* loop */
+.loop{position:relative;height:110px;margin-top:6px}
+.loop svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+.loop .back{fill:none;stroke:rgba(255,91,0,.55);stroke-width:2;stroke-dasharray:6 8}
+.in .loop .back{animation:flow 1.2s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-28}}
+.loop .lb{position:absolute;left:50%;top:70px;transform:translateX(-50%);padding:10px 22px;border-radius:999px;background:#000;border:1px solid rgba(255,91,0,.5);font-size:20px;font-weight:500;color:#fff;white-space:nowrap}
+.stage-i.key h3{color:var(--orange)}
+
+/* platform tiles */
+#s7 .cards{grid-template-columns:repeat(3,1fr);margin-top:36px}
+#s7 .card{padding:26px 30px;gap:12px}
+#s7 .card .hrow{display:flex;align-items:center;gap:16px}
+#s7 .card h3{font-size:29px}
+#s7 .card .t{font-size:22px}
+#s7 .card .ic{flex:none;width:40px;height:40px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;border:1px solid #dfe5ef}
+#s7 .card .ic i{width:12px;height:12px;border-radius:50%;background:var(--black)}
+#s7 .card.k .ic i{background:var(--orange);box-shadow:0 0 10px rgba(255,91,0,.7)}
+.trust{display:flex;gap:44px;margin-top:32px;flex-wrap:wrap}
+.trust span{display:flex;align-items:center;gap:14px;font-size:22px;font-weight:500;color:var(--black)}
+.trust span::before{content:"";width:22px;height:22px;border-radius:50%;background:var(--orange) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M4 8.5l2.5 2.5L12 5.5' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/14px no-repeat}
+#s8 .card.hot{border:2px solid var(--orange)}
+
+.moon .tex{position:absolute;inset:0;width:100%;height:100%}
+.moon .limb{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 40% 38%,rgba(0,0,0,0) 55%,rgba(0,0,0,.38) 100%)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="saros-logo" viewBox="400 435 1205 205"><g fill="currentColor"><path d="M 1122.46 484.58 C 1110.16 496.88 1102.26 511.89 1098.71 527.7 C 1127.35 521.25 1158.57 529.15 1180.86 551.45 C 1203.16 573.74 1211.06 604.96 1204.62 633.6 C 1220.41 630.05 1235.43 622.15 1247.73 609.85 C 1282.32 575.26 1282.32 519.17 1247.73 484.58 C 1213.14 449.99 1157.05 449.99 1122.46 484.58 "/><path d="M 515.18 456.29 C 574.93 456.29 613.29 474.81 613.29 516.04 L 613.29 521 L 569.71 521 L 569.71 516.04 C 569.71 495.69 547.27 490.47 515.18 490.47 L 507.36 490.47 C 473.7 490.47 452.56 495.69 452.56 507.17 L 452.56 509.51 C 452.56 523.09 467.18 524.91 527.71 529.61 C 592.15 534.82 616.94 549.7 616.94 580.22 L 616.94 583.36 C 616.94 615.97 581.97 635.79 517.01 635.79 L 509.18 635.79 C 441.09 635.79 405.87 615.97 405.87 574.74 L 405.87 569.52 L 449.7 569.52 L 449.7 574.74 C 449.7 596.66 471.09 601.62 509.18 601.62 L 517.01 601.62 C 551.71 601.62 572.85 596.66 572.85 584.4 L 572.85 581.26 C 572.85 568.48 555.1 565.36 498.48 561.44 C 439 557.26 408.21 544.22 408.21 511.61 L 408.21 509.51 C 408.21 474.81 446.82 456.29 507.36 456.29 Z M 515.18 456.29 "/><path d="M 690.75 559.09 L 772.93 559.09 L 737.2 490.73 L 725.98 490.73 Z M 782.45 488.93 L 857.73 633.45 L 811.55 633.45 L 791.2 594.31 L 672.48 594.31 L 652.13 633.45 L 607.52 633.45 L 682.55 488.98 C 692.24 470.34 711.51 458.64 732.52 458.64 C 753.51 458.64 772.76 470.31 782.45 488.93 "/><path d="M 910.23 535.34 L 998.68 535.34 C 1016.42 535.34 1025.55 529.87 1025.55 516.56 L 1025.55 512.65 C 1025.55 499.87 1016.42 493.09 998.68 493.09 L 944.24 493.09 C 925.46 493.09 910.23 508.31 910.23 527.09 Z M 1010.94 458.64 C 1049.56 458.64 1072.52 480.29 1072.52 510.56 L 1072.52 518.39 C 1072.52 541.34 1059.2 559.34 1037.03 566.66 L 1080.6 633.45 L 1028.16 633.45 L 986.93 570.3 L 910.23 570.3 L 910.23 633.45 L 864.04 633.45 L 864.04 528.47 C 864.04 489.9 895.31 458.64 933.88 458.64 Z M 1010.94 458.64 "/><path d="M 1412.37 456.29 C 1472.12 456.29 1510.48 474.81 1510.48 516.04 L 1510.48 521 L 1466.9 521 L 1466.9 516.04 C 1466.9 495.69 1444.46 490.47 1412.37 490.47 L 1404.55 490.47 C 1370.89 490.47 1349.76 495.69 1349.76 507.17 L 1349.76 509.51 C 1349.76 523.09 1364.37 524.91 1424.9 529.61 C 1489.34 534.82 1514.13 549.7 1514.13 580.22 L 1514.13 583.36 C 1514.13 615.97 1479.16 635.79 1414.21 635.79 L 1406.37 635.79 C 1338.28 635.79 1303.06 615.97 1303.06 574.74 L 1303.06 569.52 L 1346.89 569.52 L 1346.89 574.74 C 1346.89 596.66 1368.28 601.62 1406.37 601.62 L 1414.21 601.62 C 1448.9 601.62 1470.04 596.66 1470.04 584.4 L 1470.04 581.26 C 1470.04 568.48 1452.29 565.36 1395.67 561.44 C 1336.2 557.26 1305.4 544.22 1305.4 511.61 L 1305.4 509.51 C 1305.4 474.81 1344.02 456.29 1404.55 456.29 Z M 1412.37 456.29 "/></g><path fill="var(--logo-dot,#FF5B00)" d="M 1284.79 483.82 C 1284.79 508.3 1264.94 528.14 1240.46 528.14 C 1215.98 528.14 1196.14 508.3 1196.14 483.82 C 1196.14 459.34 1215.98 439.5 1240.46 439.5 C 1264.94 439.5 1284.79 459.34 1284.79 483.82 "/><text x="1522" y="508" font-size="76" font-weight="600" fill="currentColor" font-family="Arial, Helvetica, sans-serif">™</text></symbol>
+  <filter id="mtex-blur" x="-20%" y="-20%" width="140%" height="140%"><feGaussianBlur stdDeviation="0.05"></feGaussianBlur></filter><symbol id="moon-tex" viewBox="-1 -1 2 2"><g fill="#85878c" opacity="0.42" filter="url(#mtex-blur)"><ellipse cx="-0.27" cy="-0.36" rx="0.3" ry="0.24" transform="rotate(-15 -0.27 -0.36)"></ellipse><ellipse cx="0.18" cy="-0.33" rx="0.16" ry="0.14" transform="rotate(0 0.18 -0.33)"></ellipse><ellipse cx="0.31" cy="-0.05" rx="0.22" ry="0.17" transform="rotate(20 0.31 -0.05)"></ellipse><ellipse cx="-0.55" cy="0.02" rx="0.24" ry="0.46" transform="rotate(10 -0.55 0.02)"></ellipse><ellipse cx="-0.16" cy="0.36" rx="0.2" ry="0.13" transform="rotate(0 -0.16 0.36)"></ellipse><ellipse cx="0.63" cy="-0.24" rx="0.1" ry="0.08" transform="rotate(0 0.63 -0.24)"></ellipse><ellipse cx="0.52" cy="0.21" rx="0.11" ry="0.15" transform="rotate(-10 0.52 0.21)"></ellipse><ellipse cx="0.05" cy="0.12" rx="0.09" ry="0.07" transform="rotate(0 0.05 0.12)"></ellipse><ellipse cx="-0.38" cy="0.55" rx="0.12" ry="0.07" transform="rotate(0 -0.38 0.55)"></ellipse></g><g fill="#a7a9ad" stroke="#ffffff" stroke-opacity="0.35" stroke-width="0.012"><circle cx="-0.3" cy="-0.06" r="0.05"></circle><circle cx="-0.05" cy="-0.62" r="0.035"></circle><circle cx="0.42" cy="0.5" r="0.04"></circle><circle cx="0.7" cy="0.08" r="0.03"></circle><circle cx="-0.72" cy="-0.38" r="0.03"></circle><circle cx="0.12" cy="0.62" r="0.03"></circle><circle cx="-0.55" cy="0.3" r="0.025"></circle><circle cx="0.25" cy="0.32" r="0.025"></circle></g><circle cx="-0.1" cy="0.72" r="0.045" fill="#f4f4f4"></circle><g stroke="#ffffff" stroke-opacity="0.22" stroke-width="0.02" stroke-linecap="round"><line x1="-0.1" y1="0.72" x2="-0.45" y2="0.35"></line><line x1="-0.1" y1="0.72" x2="0.2" y2="0.3"></line><line x1="-0.1" y1="0.72" x2="-0.5" y2="0.95"></line><line x1="-0.1" y1="0.72" x2="0.35" y2="0.9"></line><line x1="-0.1" y1="0.72" x2="-0.1" y2="0.25"></line></g></symbol>
+</svg>
+
+<div id="viewport">
+<div class="stage" id="stage">
+
+<!-- 1 COVER -->
+<section class="slide dark" id="s1">
+  <div class="sky" aria-hidden="true">
+    <div class="stars"></div>
+    <div class="burst">
+      <div class="orb-ring r2"><i></i></div>
+      <div class="orb-ring r1"><i></i></div>
+      <div class="rays" data-rays="34" data-seed="9" data-scale="1.25"></div>
+      <div class="sph"></div><div class="rim"></div><div class="glare"></div>
+    </div>
+  </div>
+  <div class="topbar"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><span>SarosOps.com</span></div>
+  <div class="hero">
+    <p class="kicker" data-a="fade" style="--d:1s" data-i="c_kicker"></p>
+    <h1 data-a="rise" style="--d:.7s" data-i="c_h1"></h1>
+    <p class="sub" data-a="fade" style="--d:1.4s" data-i="c_sub"></p>
+  </div>
+  <div class="marquee" data-a="fade" style="--d:1.8s"><div class="marquee-track" data-list="c_marq"></div></div>
+</section>
+
+<!-- 2 PROBLEM -->
+<section class="slide alt" id="s2">
+  <div class="hd"><span class="sec" data-i="sec1"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="p_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="p_h2"></h2>
+    <div class="cards">
+      <div class="card" data-a="dash" style="--d:.3s"><p class="big"><span data-count="37"></span><span data-i="pct">%</span></p><p class="t" data-i="m_4"></p></div>
+      <div class="card" data-a="dash" style="--d:.45s"><p class="stat"><small data-i="cur"></small><span data-count="846"></span><small data-i="cur2" style="margin:0 0 0 6px"></small></p>
+        <div class="bars" aria-hidden="true">
+          <div class="bar"><b style="--h:84px;--d:.9s"></b><span><em style="font-style:normal">2024</em><em style="font-style:normal" data-money="1254"></em></span></div>
+          <div class="bar now"><b style="--h:57px;--d:1.1s"></b><span><em style="font-style:normal">2025</em><em style="font-style:normal" data-money="846"></em></span></div>
+        </div>
+        <p class="t" data-i="m_3"></p></div>
+      <div class="card quote" data-a="dash" style="--d:.6s"><p class="n">“</p><h3 data-i="g_4t"></h3><p class="t" data-i="g_4"></p></div>
+    </div>
+    <p class="source" data-a="fade" style="--d:1s" data-i="m_src"></p>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 3 METHOD -->
+<section class="slide dark" id="s3">
+  <div class="sky" aria-hidden="true"><div class="stars" style="opacity:.5"></div></div>
+  <div class="hd"><span class="sec" data-i="sec2"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <div class="cols">
+      <div>
+        <p class="eyebrow" data-a="fade" data-i="h_eye"></p>
+        <h2 class="h2" data-a="rise" style="--d:.1s" data-i="h_h2"></h2>
+        <p class="lead" data-a="rise" style="--d:.25s" data-i="h_lead"></p>
+        <div class="trio" id="trio"></div>
+      </div>
+      <div class="field" data-a="fade" style="--d:.2s" aria-hidden="true">
+        <svg id="fieldsvg" viewBox="0 0 800 600" preserveAspectRatio="none"></svg>
+        <div class="ctr"><b data-count="1240"></b><span data-i="h_recs"></span></div>
+        <div id="flabels"></div>
+        <p class="cap" data-i="h_cap"></p>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 4 PREDICTION -->
+<section class="slide" id="s4">
+  <div class="hd"><span class="sec" data-i="sec2"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="pr_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="pr_h2"></h2>
+    <p class="lead" data-a="rise" style="--d:.25s" data-i="pr_lead"></p>
+    <div class="mock">
+      <div class="panel" data-a="dash" style="--d:.4s">
+        <div class="ph"><p data-i="pr_tag"></p><span data-i="pr_meta"></span></div>
+        <h3 data-i="pr_gap"></h3>
+        <p class="ctx" data-i="pr_ctx"></p>
+        <div class="sk" id="skills"></div>
+      </div>
+      <div class="panel" data-a="dash" style="--d:.55s">
+        <div class="ph"><p data-i="pr_rec"></p><span data-i="pr_sample"></span></div>
+        <div class="trk2" data-a="log" style="--d:1.2s"><h4 data-i="pr_t1"></h4><p data-i="pr_t1d"></p><div class="meta"><span data-i="pr_t1m"></span><span class="badge" data-i="a_ready"></span></div></div>
+        <div class="trk2 hot" data-a="log" style="--d:1.6s"><span class="kpi-pill" data-i="pr_kpi"></span><h4 data-i="pr_t2"></h4><p data-i="pr_t2d"></p><div class="meta"><span data-i="pr_t2m"></span><span class="badge" data-i="a_ready"></span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 5 MEASUREMENT -->
+<section class="slide dark" id="s5">
+  <div class="hd"><span class="sec" data-i="sec3"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="r_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="ms_h2"></h2>
+    <div class="mchart" data-a="dash" style="--d:.3s">
+      <span class="tag" data-i="r_tag"></span>
+      <p class="record rec" style="margin:0"><i></i><span data-i="y_rec"></span></p>
+      <svg viewBox="0 0 1520 348" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="ga" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff5b00" stop-opacity=".28"></stop><stop offset="1" stop-color="#ff5b00" stop-opacity="0"></stop></linearGradient></defs>
+        <line class="vline" x1="40" y1="70" x2="40" y2="250"></line><line class="vline" x1="440" y1="70" x2="440" y2="250"></line><line class="vline" x1="900" y1="70" x2="900" y2="250"></line><line class="vline" x1="1460" y1="70" x2="1460" y2="250"></line>
+        <line class="baseline" x1="0" y1="232" x2="1520" y2="232"></line>
+        <path class="area" d="M440 232 C 640 230, 760 214, 900 186 S 1260 104, 1460 86 L 1460 232 Z"></path>
+        <path class="kpi" d="M40 232 L 440 232 C 640 230, 760 214, 900 186 S 1260 104, 1460 86"></path>
+        <circle class="pt" cx="40" cy="232" r="9" style="--d:.9s"></circle>
+        <circle class="pt" cx="440" cy="232" r="9" style="--d:1.5s"></circle>
+        <circle class="pt" cx="900" cy="186" r="9" style="--d:2.3s"></circle>
+        <circle class="pt" cx="1460" cy="86" r="9" style="--d:3.2s"></circle>
+      </svg>
+      <div id="msteps"></div>
+    </div>
+    <div class="cards" id="mcards"></div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 6 LOOP -->
+<section class="slide dark" id="s6">
+  <div class="sky" aria-hidden="true"><div class="stars" style="opacity:.6"></div></div>
+  <div class="hd"><span class="sec" data-i="sec3"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="lp_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="lp_h2"></h2>
+    <p class="lead" data-a="rise" style="--d:.25s" data-i="lp_lead"></p>
+    <div class="cycle">
+      <div class="line" data-a="fade" style="--d:.4s"></div>
+      <div class="bead"></div>
+      <div class="stages" id="stages"></div>
+    </div>
+    <div class="loop" data-a="fade" style="--d:2.4s">
+      <svg viewBox="0 0 1600 110" preserveAspectRatio="none" aria-hidden="true">
+        <path class="back" d="M1486 6 C 1486 90, 1300 92, 800 92 S 114 90, 114 6"></path>
+        <path d="M104 18 L114 4 L124 18" fill="none" stroke="#ff5b00" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+      </svg>
+      <span class="lb" data-i="lp_back"></span>
+    </div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 7 PLATFORM -->
+<section class="slide" id="s7">
+  <div class="hd"><span class="sec" data-i="sec4"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="pf_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="pf_h2"></h2>
+    <div class="cards" id="mods"></div>
+    <div class="trust" data-a="fade" style="--d:1.2s"><span data-i="r_1t"></span><span data-i="r_2t"></span><span data-i="r_4t"></span></div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 8 IMPLEMENTATION -->
+<section class="slide" id="s8">
+  <div class="hd"><span class="sec" data-i="sec5"></span><span>SarosOps.com</span></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="i_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="i_h2"></h2>
+    <div class="tl" aria-hidden="true">
+      <div class="trk"></div><div class="fill"></div>
+      <i class="mk" style="left:0%;--d:.5s"></i><i class="mk" style="left:33.33%;--d:1.35s"></i><i class="mk" style="left:66.66%;--d:2.2s"></i><i class="mk" style="left:100%;--d:3s"></i>
+    </div>
+    <div class="cards" id="phases"></div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+<!-- 9 REFRAME -->
+<section class="slide dark" id="s9">
+  <div class="hd"><span class="sec" data-i="sec6"></span><span>SarosOps.com</span></div>
+  <div class="cocreator" data-a="fade" style="--d:.8s"><svg class="rf" viewBox="0 0 284.59 43.46" role="img" aria-label="ReFrame Learning"><path d="M10.11 8.34L10.05 19.29L17.44 19.33C22.23 19.36 24.30 17.66 24.32 13.83C24.34 9.99 22.43 8.41 17.51 8.38L10.11 8.34M16.23 26.99L10.01 26.95L9.92 41.12L0.00 41.06L0.24 0.00L18.24 0.10C28.78 0.16 34.16 4.65 34.11 13.54C34.07 19.84 31.10 23.93 25.89 25.81L36.35 40.52L36.34 41.27L24.84 41.21L16.23 26.99" fill="#ffffff"></path><path d="M49.45 22.53L63.00 22.61C62.90 17.54 60.79 15.07 56.61 15.04C52.37 15.02 49.96 17.19 49.45 22.53M40.20 25.76C40.26 14.54 46.39 8.00 56.93 8.06C66.92 8.12 71.61 14.03 71.56 23.00C71.55 24.37 71.47 25.67 71.33 27.38L49.36 27.25C49.87 32.45 52.26 34.80 56.70 34.82C61.08 34.85 62.47 32.80 63.30 30.34L71.09 32.51C69.62 38.11 65.83 42.33 56.59 42.28C46.81 42.22 40.13 36.78 40.20 25.76" fill="#ffffff"></path><path d="M90.21 28.45L90.13 41.59L80.28 41.53L80.52 0.47L110.22 0.64L110.16 9.67L90.32 9.56L90.26 19.89L108.32 20.00L108.28 28.55L90.21 28.45" fill="#ffffff"></path><path d="M116.14 41.74L116.33 9.30L125.16 9.35L125.09 19.89L125.85 19.89C127.95 10.87 130.70 9.04 134.94 9.06L135.90 9.07L135.84 19.75L133.92 19.73C127.42 19.70 125.56 21.60 125.53 27.35L125.45 41.79L116.14 41.74" fill="#ffffff"></path><path d="M155.48 8.70C146.51 8.65 141.97 12.80 140.85 18.68L149.59 20.72C150.22 17.56 152.01 16.07 155.08 16.09C158.65 16.11 160.07 18.04 160.05 21.39L160.04 23.65L151.56 23.60C143.00 23.55 139.56 27.56 139.52 33.38C139.49 39.75 143.51 42.57 148.99 42.61C153.32 42.63 156.36 40.65 158.29 37.33L148.41 37.27L148.48 25.26L160.49 25.33L160.43 34.25L160.46 34.25L160.42 41.99L169.17 42.04L169.29 21.45C169.34 13.31 165.33 8.76 155.48 8.70" fill="#ffffff"></path><path d="M186.08 42.14L176.77 42.09L176.96 9.65L186.06 9.70L186.01 18.39L186.70 18.40C188.58 12.11 192.50 8.85 197.63 8.88C203.38 8.91 206.17 12.56 206.54 18.65L207.30 18.66C209.11 12.30 212.83 8.97 218.17 9.00C224.53 9.04 227.72 13.37 227.68 20.42L227.55 42.38L218.18 42.33L218.29 22.96C218.31 19.68 216.82 17.41 213.39 17.39C209.42 17.37 206.94 20.16 206.92 24.20L206.82 42.26L197.51 42.21L197.62 22.84C197.64 19.56 196.08 17.29 192.73 17.27C188.76 17.25 186.21 20.04 186.18 24.08L186.08 42.14" fill="#ffffff"></path><path d="M242.79 23.65L256.34 23.73C256.23 18.67 254.12 16.19 249.95 16.17C245.70 16.14 243.29 18.32 242.79 23.65M233.53 26.88C233.59 15.66 239.72 9.12 250.26 9.19C260.25 9.24 264.94 15.16 264.89 24.12C264.88 25.49 264.80 26.79 264.66 28.50L242.69 28.37C243.21 33.58 245.59 35.92 250.04 35.95C254.42 35.97 255.80 33.92 256.63 31.47L264.42 33.63C262.95 39.24 259.16 43.46 249.93 43.40C240.14 43.35 233.46 37.90 233.53 26.88" fill="#ffffff"></path><path d="M272.58 25.39H284.59V37.40H272.58Z" fill="#ff6d00"></path></svg></div>
+  <div class="pad">
+    <p class="eyebrow" data-a="fade" data-i="f_eye"></p>
+    <h2 class="h2" data-a="rise" style="--d:.1s" data-i="f_h2"></h2>
+    <p class="lead" data-a="rise" style="--d:.25s" data-i="f_lead"></p>
+    <div class="cards">
+      <div class="card" data-a="dash" style="--d:.4s"><p class="stat"><span data-count="20"></span>+</p><p class="t" data-i="f_1"></p></div>
+      <div class="card" data-a="dash" style="--d:.5s"><p class="stat"><span data-count="280"></span>+</p><p class="t" data-i="f_2"></p></div>
+      <div class="card" data-a="dash" style="--d:.6s"><p class="stat"><span data-count="30000"></span>+</p><p class="t" data-i="f_3"></p></div>
+      <div class="card" data-a="dash" style="--d:.7s"><p class="stat"><span data-count="2700"></span>+</p><p class="t" data-i="f_4"></p></div>
+    </div>
+    <div class="clients" data-a="fade" style="--d:1s">
+      <p data-i="f_cl"></p>
+      <div class="marquee"><div class="marquee-track" data-list="f_names"></div></div>
+    </div>
+  </div>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="f_co"></p><p class="pg"></p></div>
+</section>
+
+<!-- 10 DEMO -->
+<section class="slide dark" id="s10">
+  <div class="sky" aria-hidden="true"><div class="stars"></div></div>
+  <div class="total" aria-hidden="true">
+    <div class="orb-ring r2"><i></i></div>
+    <div class="orb-ring r1"><i></i></div>
+    <div class="corona" id="s10-corona"></div>
+    <div class="rays" data-rays="40" data-seed="21" data-scale=".75" data-full="1"></div>
+    <div class="disc"></div>
+    <div class="ring" data-a="fade" style="--d:.3s"></div>
+  </div>
+  <div class="hd"><span class="sec" data-i="sec7"></span><span>SarosOps.com</span></div>
+  <div class="copy">
+    <p class="kicker" data-a="fade" style="--d:.3s" data-i="d_kicker"></p>
+    <h2 data-a="rise" style="--d:.45s" data-i="d_h2"></h2>
+    <p class="sub" data-a="rise" style="--d:.6s" data-i="d_sub"></p>
+    <div class="steps">
+      <div data-a="log" style="--d:.9s"><b>1</b><span data-i="d_1"></span></div>
+      <div data-a="log" style="--d:1.05s"><b>2</b><span data-i="d_2"></span></div>
+      <div data-a="log" style="--d:1.2s"><b>3</b><span data-i="d_3"></span></div>
+    </div>
+    <a class="btn" href="https://demo.sarosops.com" data-a="rise" style="--d:1.4s">demo.sarosops.com <span class="dot"></span></a>
+  </div>
+  <p class="tagline" data-a="fade" style="--d:1.8s" data-i="d_tag"></p>
+  <div class="ft"><svg class="logo" role="img" aria-label="Saros"><use href="#saros-logo"></use></svg><p class="legal" data-i="legal"></p><p class="pg"></p></div>
+</section>
+
+</div>
+</div>
+
+<div id="bar"></div>
+<div class="ui" id="langs" role="group" aria-label="Idioma">
+  <button type="button" data-lang="pt" aria-pressed="true">PT</button>
+  <button type="button" data-lang="en" aria-pressed="false">EN</button>
+  <button type="button" data-lang="es" aria-pressed="false">ES</button>
+  <button type="button" data-lang="fr" aria-pressed="false" title="Français (Canada)">FR</button>
+</div>
+<div class="ui" id="nav">
+  <button type="button" id="prev" aria-label="Anterior"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8l5 5"/></svg></button>
+  <span id="count" aria-live="polite">01 / 10</span>
+  <button type="button" id="next" aria-label="Próximo"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3l5 5-5 5"/></svg></button>
+  <button type="button" id="fs" aria-label="Tela cheia"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6V2h4M14 6V2h-4M2 10v4h4M14 10v4h-4"/></svg></button>
+</div>
+
+<script>
+const LEGAL='© 2026 ReFrame Learning, LLC. All rights reserved. Saros™ is a trademark of ReFrame Learning, LLC.';
+const T={
+pt:{
+ _lang:'pt-BR',_ui:['Idioma','Anterior','Próximo','Tela cheia'],legal:LEGAL,cur:'US$',cur2:'',pct:'%',
+ sec1:'01 — O problema',sec2:'02 — Predição',sec3:'03 — Mensuração',sec4:'04 — A plataforma',sec5:'05 — Implantação',sec6:'06 — Quem faz',sec7:'07 — Próximo passo',
+ c_kicker:'eles não adivinharam. eles prestaram atenção.',
+ c_h1:'Todo pedido de treinamento é um sinal.<br><span class="hl">Saros</span> é a plataforma de operações de T&amp;D que <span class="hl">descobre, entende o padrão e recomenda o aprendizado de melhor desempenho.</span>',
+ c_sub:'O Saros prevê o treinamento que a empresa vai precisar antes que alguém peça, e mede o impacto de cada um no KPI do negócio.',
+ c_marq:['Previsão de treinamento a partir do histórico','KPI definido em cada pedido','Linha de base registrada antes do piloto','Relatório de impacto do piloto à expansão','Do pedido ao resultado em um só registro','Assistente FLUX que responde com a fonte','Funciona com o seu LMS','Português, inglês, espanhol e francês'],
+ p_eye:'O problema',p_h2:'T&amp;D ainda reporta conclusões, não impacto.',
+ m_3:'de investimento direto em T&amp;D por colaborador em 2025, enquanto as horas de aprendizagem subiram.',
+ m_4:'dos gestores de RH medem o sucesso do treinamento pelo impacto no negócio.',
+ g_4t:'O relatório que conta conclusões.',g_4:'A liderança pergunta o que mudou, e o dado para responder nunca foi registrado.',
+ m_src:'Fontes: ATD 2026 State of the Industry (dados de 2025); TalentLMS 2026 L&amp;D Benchmark Report.',
+ h_eye:'Como o Saros prevê',h_h2:'Eles não adivinharam. Eles prestaram atenção.',
+ h_lead:'Os astrônomos babilônios registraram cada eclipse até um padrão aparecer. O Saros faz o mesmo com cada pedido, projeto e resultado de T&amp;D.',
+ h_trio:[['Registro','Cada passo deixa um registro.'],['Histórico','Cada registro vira histórico.'],['Padrão','E o histórico, bem lido, vira padrão.']],
+ h_recs:'registros',h_cap:'Dados de exemplo · cada ponto é um pedido registrado',
+ h_pats:['O pedido que sempre volta','O projeto que espera no mesmo lugar','A skill que ninguém treinou'],
+ pr_eye:'Predição de treinamento',pr_h2:'O treinamento certo, antes que alguém peça.',
+ pr_lead:'O Saros lê os padrões de pedidos, projetos e resultados anteriores e prevê o treinamento que a empresa vai precisar.',
+ pr_tag:'Previsão Saros',pr_meta:'80 pessoas · 7 skills mapeadas',pr_gap:'Lacunas de skill encontradas',pr_ctx:'Canal: Indireto D2D · Cargo: Consultor D2D',
+ pr_cols:['Skill','Pessoas treinadas'],pr_none:'Nenhuma',pr_sk:['Pitch de valor','Negociação','Simulador de ofertas','Escuta ativa','CRM v3'],
+ pr_rec:'Trilhas recomendadas',pr_sample:'Exemplo',
+ pr_t1:'Formação · Consultor D2D',pr_t1d:'Skills que essas pessoas precisam para suas tarefas e ainda não treinaram.',pr_t1m:'48 pessoas · 5 ondas',
+ pr_t2:'Reciclagem · Consultor D2D',pr_t2d:'Treinamento concluído, mas o KPI relacionado ainda está abaixo da meta.',pr_t2m:'32 pessoas · 5 ondas',
+ pr_kpi:'KPI abaixo da meta',a_ready:'Pronta para publicar',
+ r_eye:'KPI na entrada, KPI na saída',ms_h2:'Cada treinamento medido contra o KPI que o motivou.',r_tag:'Ilustrativo',
+ y_rec:'Exemplo · <b>REQ-0418</b> · KPI: tempo até a produtividade',
+ ms_steps:['KPI definido no pedido','Linha de base registrada','Piloto','Expansão e relatório de impacto'],
+ ms_cards:[['Contra a linha de base','Não contra a lista de presença.'],['Por turma, canal e região','Onde o resultado veio, e onde não veio.'],['Um relatório que a liderança lê','A resposta para “o que mudou?”.']],
+ lp_eye:'O ciclo se fecha',lp_h2:'Cada resultado alimenta a próxima previsão.',
+ lp_lead:'7 etapas em 5 portais, sobre uma só base de dados. Quando o KPI não se move, o Saros já propõe a reciclagem.',
+ lp_back:'Resultados → nova previsão',
+ y_st:[['Previsão','Saros'],['Avaliação','Time de T&amp;D'],['Desenho','Estúdio de conteúdo'],['Produção','Estúdio de conteúdo'],['Engajamento','Time de T&amp;D'],['Aprendizagem','Instrutor e aluno'],['Resultados','Time de T&amp;D']],
+ pf_eye:'Tudo em uma só base',pf_h2:'Para prever e medir, cada passo precisa estar registrado.',
+ pf_mods:[['Pedidos com KPI','Problema, público e KPI antes de virar projeto.',1],['Esteira de projetos','Etapa, dono e dias parados em cada etapa.'],['Estúdio de conteúdo com IA','12 arquiteturas instrucionais, na sua marca.'],['Trilhas por cargo','A partir de tarefas, skills e histórico.'],['Learning analytics','KPI na entrada, KPI na saída.',1],['Assistente FLUX','Responde sobre qualquer projeto, com a fonte.']],
+ r_1t:'Funciona com o seu LMS (SCORM 1.2)',r_2t:'SSO e acesso por perfil',r_4t:'Seus dados nunca treinam modelos de IA',
+ i_eye:'Implantação',i_h2:'Do primeiro pedido ao primeiro relatório de impacto em 90 dias.',
+ i_ph:[['Dias 1–30','Operando',['SSO e acesso por perfil no ar','Portal de pedidos aberto para uma ou duas áreas piloto','Backlog atual carregado na esteira']],['Dias 31–60','Produzindo',['O primeiro piloto passa pelas sete etapas','As primeiras peças feitas com IA saem no seu design system']],['Dias 61–90','Provando',['Analytics ligado ao KPI do piloto','Um primeiro relatório de impacto para a liderança']]],
+ f_eye:'Quem faz',f_h2:'Feito por quem opera T&amp;D.',f_lead:'O Saros é um produto da ReFrame Learning, consultoria e estúdio de conteúdo com mais de 20 anos em T&amp;D corporativo. Construímos a plataforma que gostaríamos que nossos clientes tivessem.',
+ f_1:'anos em T&amp;D corporativo',f_2:'projetos de aprendizagem por ano',f_3:'experiências de treinamento por ano',f_4:'experiências de aprendizagem curadas',
+ f_cl:'Aprendizagem entregue para times de',f_names:['Claro','Dunkin’','L’Oréal Paris','Serasa','Comgás','James Hardie'],
+ f_co:'Renato Gangoni, cocriador do Saros · '+LEGAL,
+ d_kicker:'agora, na prática',d_h2:'Traga um pedido real de treinamento.',d_sub:'Em 30 minutos, com o produto aberto, você vê o KPI dele sair do pedido e chegar ao relatório de resultado.',
+ d_1:'O KPI e a linha de base entram com o pedido',d_2:'O Saros mostra o que prevê para o seu público',d_3:'O resultado chega medido contra o KPI',
+ d_tag:'Toda mudança em uma empresa passa primeiro pelo T&amp;D.'
+},
+en:{
+ _lang:'en',_ui:['Language','Previous','Next','Full screen'],legal:LEGAL,cur:'$',cur2:'',pct:'%',
+ sec1:'01 — The problem',sec2:'02 — Prediction',sec3:'03 — Measurement',sec4:'04 — The platform',sec5:'05 — Implementation',sec6:'06 — Who builds it',sec7:'07 — Next step',
+ c_kicker:'they didn’t guess. they paid attention.',
+ c_h1:'Every training request is a signal.<br><span class="hl">Saros</span> is the learning operations platform that <span class="hl">discovers, understands the pattern and recommends the best-performing learning.</span>',
+ c_sub:'Saros predicts the training your company will need before anyone asks, and measures each one against the business KPI it was meant to move.',
+ c_marq:['Training prediction from your own history','A KPI on every request','Baseline recorded before the pilot','Impact reported from pilot to rollout','From request to result in one record','FLUX AI assistant answers with the source','Works with your LMS','English, Portuguese, Spanish and French'],
+ p_eye:'The problem',p_h2:'L&amp;D still reports completions, not impact.',
+ m_3:'direct L&amp;D spend per employee in 2025, while learning hours went up.',
+ m_4:'of HR managers measure training success by business impact.',
+ g_4t:'The report that counts completions.',g_4:'Leadership asks what changed, and the data to answer was never recorded.',
+ m_src:'Sources: ATD 2026 State of the Industry (2025 data); TalentLMS 2026 L&amp;D Benchmark Report.',
+ h_eye:'How Saros predicts',h_h2:'They didn’t guess. They paid attention.',
+ h_lead:'Babylonian astronomers wrote down every eclipse, night after night, until a pattern appeared. Saros does the same with every request, project and result in L&amp;D.',
+ h_trio:[['Record','Every step leaves a record.'],['History','Every record becomes history.'],['Pattern','And history, read well, becomes a pattern.']],
+ h_recs:'records',h_cap:'Sample data · each dot is one recorded training request',
+ h_pats:['The request that keeps coming back','The project that waits in the same place','The skill nobody trained for'],
+ pr_eye:'Training prediction',pr_h2:'The right training, before anyone asks.',
+ pr_lead:'Saros reads the patterns in past requests, projects and results, and predicts which training the company will need.',
+ pr_tag:'Saros prediction',pr_meta:'80 people · 7 skills mapped',pr_gap:'Skill gaps found',pr_ctx:'Channel: Indirect D2D · Role: D2D consultant',
+ pr_cols:['Skill','People trained'],pr_none:'None',pr_sk:['Value pitch','Negotiation','Offer simulator','Active listening','CRM v3'],
+ pr_rec:'Recommended learning tracks',pr_sample:'Sample',
+ pr_t1:'Training track · D2D consultant',pr_t1d:'Skills these people need for their tasks but haven’t trained yet.',pr_t1m:'48 people · 5 waves',
+ pr_t2:'Refresher · D2D consultant',pr_t2d:'Training completed, but the related KPI is still below target.',pr_t2m:'32 people · 5 waves',
+ pr_kpi:'KPI below target',a_ready:'Ready to publish',
+ r_eye:'KPI in, KPI out',ms_h2:'Every training measured against the KPI that started it.',r_tag:'Illustrative',
+ y_rec:'Sample record · <b>REQ-0418</b> · KPI: time to productivity',
+ ms_steps:['KPI defined in the request','Baseline recorded','Pilot','Rollout and impact report'],
+ ms_cards:[['Against the baseline','Not against the attendance list.'],['By cohort, channel and region','Where results moved, and where they did not.'],['A report leadership can read','The answer to “what changed?”.']],
+ lp_eye:'The loop closes',lp_h2:'Every result feeds the next prediction.',
+ lp_lead:'7 stages across 5 portals, on one database. When the KPI does not move, Saros proposes the refresher.',
+ lp_back:'Results → new prediction',
+ y_st:[['Prediction','Saros'],['Assessment','L&amp;D team'],['Design','Content studio'],['Development','Content studio'],['Engagement','L&amp;D team'],['Learning','Instructor · Learner'],['Results','L&amp;D team']],
+ pf_eye:'One database',pf_h2:'To predict and measure, every step has to be on record.',
+ pf_mods:[['Training intake','Business problem, audience and KPI before a request becomes a project.',1],['Project pipeline','Stage, owner and days in stage for every project.'],['AI content production','12 instructional design models, in your brand.'],['Role-based learning paths','Built from each role’s tasks, skills and history.'],['Learning analytics','KPI in, KPI out.',1],['FLUX AI assistant','Answers about any project, with its source.']],
+ r_1t:'Works with your LMS (SCORM 1.2)',r_2t:'SSO and role-based access',r_4t:'Your data never trains AI models',
+ i_eye:'Implementation',i_h2:'From first request to first impact report in 90 days.',
+ i_ph:[['Days 1–30','Operating',['SSO and role-based access live','Intake open to one or two pilot business areas','Current backlog loaded into the pipeline']],['Days 31–60','Producing',['The first pilot runs through all seven stages','The first AI-drafted pieces ship in your design system']],['Days 61–90','Proving',['Analytics tied to the pilot’s KPI','A first impact report your leadership can read']]],
+ f_eye:'Who builds it',f_h2:'Made by people who run learning operations.',f_lead:'Saros is a product of Reframe Learning, a learning consultancy and content studio with more than 20 years producing training for corporate L&amp;D teams. We built the platform we wished our clients had.',
+ f_1:'years in corporate L&amp;D',f_2:'global learning projects a year',f_3:'training experiences a year',f_4:'learning experiences curated',
+ f_cl:'Has delivered learning for teams at',f_names:['Claro','Dunkin’','L’Oréal Paris','Serasa','Comgás','James Hardie'],
+ f_co:'Renato Gangoni, co-creator of Saros · '+LEGAL,
+ d_kicker:'now, in practice',d_h2:'Bring a real training request.',d_sub:'In a 30-minute walkthrough, with the product open, watch its KPI travel from intake to the results report.',
+ d_1:'The KPI and baseline come in with the request',d_2:'Saros shows what it predicts for your audience',d_3:'The result arrives measured against the KPI',
+ d_tag:'Every change in a company passes through L&amp;D first.'
+},
+es:{
+ _lang:'es',_ui:['Idioma','Anterior','Siguiente','Pantalla completa'],legal:LEGAL,cur:'US$',cur2:'',pct:'%',
+ sec1:'01 — El problema',sec2:'02 — Predicción',sec3:'03 — Medición',sec4:'04 — La plataforma',sec5:'05 — Implementación',sec6:'06 — Quién lo hace',sec7:'07 — Próximo paso',
+ c_kicker:'no adivinaron. prestaron atención.',
+ c_h1:'Cada solicitud de capacitación es una señal.<br><span class="hl">Saros</span> es la plataforma de operaciones de aprendizaje que <span class="hl">descubre, entiende el patrón y recomienda el aprendizaje de mejor desempeño.</span>',
+ c_sub:'Saros predice la capacitación que la empresa necesitará antes de que alguien la pida, y mide el impacto de cada una en el KPI del negocio.',
+ c_marq:['Predicción de capacitación a partir del historial','Un KPI en cada solicitud','Línea base registrada antes del piloto','Impacto reportado del piloto a la expansión','De la solicitud al resultado en un solo registro','Asistente FLUX que responde con la fuente','Funciona con tu LMS','Español, inglés, portugués y francés'],
+ p_eye:'El problema',p_h2:'T&amp;D todavía reporta finalizaciones, no impacto.',
+ m_3:'de inversión directa en T&amp;D por colaborador en 2025, mientras las horas de aprendizaje subieron.',
+ m_4:'de los gerentes de RR. HH. miden el éxito de la capacitación por su impacto en el negocio.',
+ g_4t:'El informe que cuenta finalizaciones.',g_4:'El liderazgo pregunta qué cambió, y el dato para responder nunca se registró.',
+ m_src:'Fuentes: ATD 2026 State of the Industry (datos de 2025); TalentLMS 2026 L&amp;D Benchmark Report.',
+ h_eye:'Cómo predice Saros',h_h2:'No adivinaron. Prestaron atención.',
+ h_lead:'Los astrónomos babilonios registraron cada eclipse hasta que apareció un patrón. Saros hace lo mismo con cada solicitud, proyecto y resultado de T&amp;D.',
+ h_trio:[['Registro','Cada paso deja un registro.'],['Historial','Cada registro se vuelve historial.'],['Patrón','Y el historial, bien leído, se vuelve patrón.']],
+ h_recs:'registros',h_cap:'Datos de ejemplo · cada punto es una solicitud registrada',
+ h_pats:['La solicitud que siempre vuelve','El proyecto que espera en el mismo lugar','La habilidad que nadie capacitó'],
+ pr_eye:'Predicción de capacitación',pr_h2:'La capacitación correcta, antes de que alguien la pida.',
+ pr_lead:'Saros lee los patrones de solicitudes, proyectos y resultados anteriores y predice la capacitación que la empresa necesitará.',
+ pr_tag:'Predicción Saros',pr_meta:'80 personas · 7 habilidades mapeadas',pr_gap:'Brechas de habilidad encontradas',pr_ctx:'Canal: Indirecto D2D · Cargo: Consultor D2D',
+ pr_cols:['Habilidad','Personas capacitadas'],pr_none:'Ninguna',pr_sk:['Pitch de valor','Negociación','Simulador de ofertas','Escucha activa','CRM v3'],
+ pr_rec:'Rutas recomendadas',pr_sample:'Ejemplo',
+ pr_t1:'Formación · Consultor D2D',pr_t1d:'Habilidades que estas personas necesitan para sus tareas y aún no han entrenado.',pr_t1m:'48 personas · 5 olas',
+ pr_t2:'Reciclaje · Consultor D2D',pr_t2d:'Capacitación completada, pero el KPI relacionado sigue por debajo de la meta.',pr_t2m:'32 personas · 5 olas',
+ pr_kpi:'KPI bajo la meta',a_ready:'Lista para publicar',
+ r_eye:'KPI de entrada, KPI de salida',ms_h2:'Cada capacitación medida contra el KPI que la motivó.',r_tag:'Ilustrativo',
+ y_rec:'Registro de ejemplo · <b>REQ-0418</b> · KPI: tiempo hasta la productividad',
+ ms_steps:['KPI definido en la solicitud','Línea base registrada','Piloto','Expansión e informe de impacto'],
+ ms_cards:[['Contra la línea base','No contra la lista de asistencia.'],['Por grupo, canal y región','Dónde llegó el resultado, y dónde no.'],['Un informe que el liderazgo lee','La respuesta a “¿qué cambió?”.']],
+ lp_eye:'El ciclo se cierra',lp_h2:'Cada resultado alimenta la próxima predicción.',
+ lp_lead:'7 etapas en 5 portales, sobre una sola base de datos. Cuando el KPI no se mueve, Saros ya propone el reciclaje.',
+ lp_back:'Resultados → nueva predicción',
+ y_st:[['Predicción','Saros'],['Evaluación','Equipo de T&amp;D'],['Diseño','Estudio de contenido'],['Producción','Estudio de contenido'],['Participación','Equipo de T&amp;D'],['Aprendizaje','Instructor y alumno'],['Resultados','Equipo de T&amp;D']],
+ pf_eye:'Todo en una sola base',pf_h2:'Para predecir y medir, cada paso debe quedar registrado.',
+ pf_mods:[['Solicitudes con KPI','Problema, público y KPI antes de volverse proyecto.',1],['Pipeline de proyectos','Etapa, responsable y días detenidos en cada etapa.'],['Estudio de contenido con IA','12 arquitecturas instruccionales, con tu marca.'],['Rutas por cargo','A partir de tareas, habilidades e historial.'],['Learning analytics','KPI de entrada, KPI de salida.',1],['Asistente FLUX','Responde sobre cualquier proyecto, con la fuente.']],
+ r_1t:'Funciona con tu LMS (SCORM 1.2)',r_2t:'SSO y acceso por perfil',r_4t:'Tus datos nunca entrenan modelos de IA',
+ i_eye:'Implementación',i_h2:'De la primera solicitud al primer informe de impacto en 90 días.',
+ i_ph:[['Días 1–30','Operando',['SSO y acceso por perfil activos','Solicitudes abiertas a una o dos áreas piloto','Backlog actual cargado en el pipeline']],['Días 31–60','Produciendo',['El primer piloto recorre las siete etapas','Las primeras piezas con IA salen en tu design system']],['Días 61–90','Demostrando',['Analytics ligado al KPI del piloto','Un primer informe de impacto para el liderazgo']]],
+ f_eye:'Quién lo hace',f_h2:'Hecho por quien opera T&amp;D.',f_lead:'Saros es un producto de ReFrame Learning, consultora y estudio de contenido con más de 20 años en T&amp;D corporativo. Construimos la plataforma que nos hubiera gustado que tuvieran nuestros clientes.',
+ f_1:'años en T&amp;D corporativo',f_2:'proyectos de aprendizaje al año',f_3:'experiencias de capacitación al año',f_4:'experiencias de aprendizaje curadas',
+ f_cl:'Aprendizaje entregado a equipos de',f_names:['Claro','Dunkin’','L’Oréal Paris','Serasa','Comgás','James Hardie'],
+ f_co:'Renato Gangoni, cocreador de Saros · '+LEGAL,
+ d_kicker:'ahora, en la práctica',d_h2:'Trae una solicitud real de capacitación.',d_sub:'En 30 minutos, con el producto abierto, verás su KPI pasar de la solicitud al informe de resultados.',
+ d_1:'El KPI y la línea base entran con la solicitud',d_2:'Saros muestra lo que predice para tu público',d_3:'El resultado llega medido contra el KPI',
+ d_tag:'Todo cambio en una empresa pasa primero por T&amp;D.'
+},
+fr:{
+ _lang:'fr-CA',_ui:['Langue','Précédent','Suivant','Plein écran'],legal:LEGAL,cur:'',cur2:'$ US',pct:' %',
+ sec1:'01 — Le problème',sec2:'02 — Prédiction',sec3:'03 — Mesure',sec4:'04 — La plateforme',sec5:'05 — Implantation',sec6:'06 — Qui la conçoit',sec7:'07 — Prochaine étape',
+ c_kicker:'ils n’ont pas deviné. ils ont été attentifs.',
+ c_h1:'Chaque demande de formation est un signal.<br><span class="hl">Saros</span> est la plateforme d’opérations de formation qui <span class="hl">découvre, comprend la tendance et recommande la formation la plus performante.</span>',
+ c_sub:'Saros prédit la formation dont l’entreprise aura besoin avant que quiconque la demande, et mesure l’impact de chacune sur l’indicateur d’affaires visé.',
+ c_marq:['Prédiction de la formation à partir de votre historique','Un indicateur dans chaque demande','Niveau de référence consigné avant le pilote','Impact mesuré du pilote au déploiement','De la demande au résultat, dans un seul dossier','Assistant FLUX qui répond avec la source','Compatible avec votre LMS','Français, anglais, espagnol et portugais'],
+ p_eye:'Le problème',p_h2:'La formation rend encore compte des achèvements, pas de l’impact.',
+ m_3:'de dépenses directes en formation par employé en 2025, alors que les heures de formation ont augmenté.',
+ m_4:'des gestionnaires RH mesurent le succès d’une formation par son impact sur les affaires.',
+ g_4t:'Le rapport qui compte les achèvements.',g_4:'La direction demande ce qui a changé, et les données pour répondre n’ont jamais été consignées.',
+ m_src:'Sources : ATD 2026 State of the Industry (données de 2025); TalentLMS 2026 L&amp;D Benchmark Report.',
+ h_eye:'Comment Saros prédit',h_h2:'Ils n’ont pas deviné. Ils ont été attentifs.',
+ h_lead:'Les astronomes babyloniens ont noté chaque éclipse jusqu’à ce qu’une tendance apparaisse. Saros fait de même avec chaque demande, projet et résultat de formation.',
+ h_trio:[['Consignation','Chaque étape laisse une trace.'],['Historique','Chaque trace devient historique.'],['Tendance','Et l’historique, bien lu, révèle une tendance.']],
+ h_recs:'demandes consignées',h_cap:'Données d’exemple · chaque point est une demande consignée',
+ h_pats:['La demande qui revient sans cesse','Le projet qui attend au même endroit','La compétence que personne n’a développée'],
+ pr_eye:'Prédiction de la formation',pr_h2:'La bonne formation, avant même qu’on la demande.',
+ pr_lead:'Saros lit les tendances des demandes, projets et résultats passés, et prédit la formation dont l’entreprise aura besoin.',
+ pr_tag:'Prédiction Saros',pr_meta:'80 personnes · 7 compétences',pr_gap:'Écarts de compétences détectés',pr_ctx:'Canal : Indirect porte-à-porte · Rôle : Conseiller',
+ pr_cols:['Compétence','Personnes formées'],pr_none:'Aucune',pr_sk:['Argumentaire de valeur','Négociation','Simulateur d’offres','Écoute active','CRM v3'],
+ pr_rec:'Parcours recommandés',pr_sample:'Exemple',
+ pr_t1:'Formation · Conseiller porte-à-porte',pr_t1d:'Compétences nécessaires à leurs tâches et pas encore développées.',pr_t1m:'48 personnes · 5 vagues',
+ pr_t2:'Mise à niveau · Conseiller porte-à-porte',pr_t2d:'Formation terminée, mais l’indicateur associé est encore sous la cible.',pr_t2m:'32 personnes · 5 vagues',
+ pr_kpi:'Indicateur sous la cible',a_ready:'Prêt à publier',
+ r_eye:'Indicateur à l’entrée, indicateur à la sortie',ms_h2:'Chaque formation mesurée par rapport à l’indicateur qui l’a motivée.',r_tag:'Illustratif',
+ y_rec:'Exemple · <b>REQ-0418</b> · Indicateur : délai de productivité',
+ ms_steps:['Indicateur défini dans la demande','Niveau de référence consigné','Pilote','Déploiement et rapport d’impact'],
+ ms_cards:[['Par rapport au niveau de référence','Pas par rapport à la feuille de présence.'],['Par cohorte, canal et région','Là où les résultats ont bougé, et là où ils n’ont pas bougé.'],['Un rapport que la direction peut lire','La réponse à « qu’est-ce qui a changé? ».']],
+ lp_eye:'La boucle se referme',lp_h2:'Chaque résultat nourrit la prochaine prédiction.',
+ lp_lead:'7 étapes dans 5 portails, sur une seule base de données. Quand l’indicateur ne bouge pas, Saros propose la mise à niveau.',
+ lp_back:'Résultats → nouvelle prédiction',
+ y_st:[['Prédiction','Saros'],['Évaluation','Équipe de formation'],['Conception','Studio de contenu'],['Production','Studio de contenu'],['Mobilisation','Équipe de formation'],['Apprentissage','Formateur · Apprenant'],['Résultats','Équipe de formation']],
+ pf_eye:'Tout dans une seule base',pf_h2:'Pour prédire et mesurer, chaque étape doit être consignée.',
+ pf_mods:[['Demandes avec indicateur','Problème, public et indicateur avant de devenir un projet.',1],['Pipeline de projets','Étape, responsable et jours d’attente pour chaque projet.'],['Studio de contenu avec IA','12 architectures pédagogiques, à votre image de marque.'],['Parcours par rôle','À partir des tâches, compétences et historique.'],['Analytique de l’apprentissage','Indicateur à l’entrée, indicateur à la sortie.',1],['Assistant FLUX','Répond sur n’importe quel projet, avec la source.']],
+ r_1t:'Compatible avec votre LMS (SCORM 1.2)',r_2t:'SSO et accès par rôle',r_4t:'Vos données n’entraînent jamais de modèles d’IA',
+ i_eye:'Implantation',i_h2:'De la première demande au premier rapport d’impact en 90 jours.',
+ i_ph:[['Jours 1 à 30','En opération',['SSO et accès par rôle en service','Demandes ouvertes à un ou deux secteurs pilotes','Arriéré actuel chargé dans le pipeline']],['Jours 31 à 60','En production',['Le premier projet pilote franchit les sept étapes','Les premières pièces rédigées par l’IA sortent à votre image de marque']],['Jours 61 à 90','La preuve',['Analytique liée à l’indicateur du pilote','Un premier rapport d’impact lisible par votre direction']]],
+ f_eye:'Qui la conçoit',f_h2:'Conçue par des gens qui gèrent la formation.',f_lead:'Saros est un produit de ReFrame Learning, cabinet-conseil et studio de contenu qui produit de la formation pour des équipes d’entreprise depuis plus de 20 ans. Nous avons bâti la plateforme que nous aurions voulu offrir à nos clients.',
+ f_1:'ans en formation en entreprise',f_2:'projets de formation par année',f_3:'expériences de formation par année',f_4:'expériences d’apprentissage sélectionnées',
+ f_cl:'A offert de la formation aux équipes de',f_names:['Claro','Dunkin’','L’Oréal Paris','Serasa','Comgás','James Hardie'],
+ f_co:'Renato Gangoni, cocréateur de Saros · '+LEGAL,
+ d_kicker:'maintenant, en pratique',d_h2:'Apportez une vraie demande de formation.',d_sub:'En 30 minutes, produit ouvert, suivez son indicateur de la demande jusqu’au rapport de résultats.',
+ d_1:'L’indicateur et le niveau de référence arrivent avec la demande',d_2:'Saros montre ce qu’il prédit pour votre public',d_3:'Le résultat arrive mesuré par rapport à l’indicateur',
+ d_tag:'Tout changement dans une entreprise passe d’abord par la formation.'
+}};
+
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const slides=$$('.slide'); let cur=0, lang='pt';
+const fmt=(n,l)=>{const s=Math.round(n).toString();return s.length<4?s:s.replace(/\B(?=(\d{3})+(?!\d))/g,l==='en'?',':l==='fr'?' ':'.');};
+slides.forEach((s,i)=>{const p=s.querySelector('.pg'); if(p) p.textContent=String(i+1).padStart(2,'0');});
+
+/* rays (same generator as the site hero) */
+$$('[data-rays]').forEach(box=>{
+  let sd=+box.dataset.seed; const rr=()=>(sd=(sd*16807)%2147483647)/2147483647;
+  const sc=+box.dataset.scale, full=box.dataset.full; let h='';
+  for(let k=0;k<+box.dataset.rays;k++){
+    const right=k%2===0;
+    const a= full ? rr()*360 : (right? -4+rr()*50 : 184-rr()*50);
+    const l=(full? 90+rr()*260 : 200+rr()*560)*sc, o=(full? 285+rr()*10 : rr()*50*sc), w=rr()<.3?2:1.2, op=.45+rr()*.5;
+    h+=`<span class="ray" style="--a:${a.toFixed(1)}deg;--l:${l.toFixed(0)}px;--o:${o.toFixed(0)}px;--w:${w}px;--op:${op.toFixed(2)};--d:${(.3+rr()).toFixed(2)}s;--d2:${(2+rr()*4).toFixed(2)}s">${k%3===0?`<i style="--d3:${(1.5+rr()*5).toFixed(2)}s;--t:${(2.6+rr()*2.8).toFixed(2)}s"></i>`:''}</span>`;
+  }
+  if(!full) for(let k=0;k<5;k++){const a=70+rr()*40,l=(40+rr()*70)*sc;h+=`<span class="ray" style="--a:${a.toFixed(1)}deg;--l:${l.toFixed(0)}px;--o:0px;--w:1px;--op:.35;--d:${(.5+rr()).toFixed(2)}s;--d2:${(rr()*4).toFixed(2)}s"></span>`;}
+  box.innerHTML=h;
+});
+
+/* pattern field: records -> history -> pattern (sample data) */
+const CL=[[140,150],[360,300],[170,460]];
+(()=>{let sd=7; const rr=()=>(sd=(sd*16807)%2147483647)/2147483647; let h='';
+  for(let r=0;r<11;r++) for(let c=0;c<17;c++){
+    const x=40+c*45+(rr()-.5)*22, y=40+r*50+(rr()-.5)*22;
+    const near=CL.findIndex(([cx,cy])=>Math.hypot(x-cx,y-cy)<70);
+    const d=(.3+rr()*1.6).toFixed(2);
+    h+=`<circle cx="${x.toFixed(0)}" cy="${y.toFixed(0)}" r="${near>=0?7:5}"${near>=0?` class="p" style="--d:${d}s;--d2:${(2.4+near*.5+rr()*.3).toFixed(2)}s"`:` style="--d:${d}s"`}></circle>`;
+  }
+  $('#fieldsvg').innerHTML=h;})();
+
+function render(){
+  const D=T[lang];
+  document.documentElement.lang=D._lang;
+  $$('[data-i]').forEach(el=>{const v=D[el.dataset.i]; if(v==null) return; el.innerHTML=v;});
+  $$('[data-list]').forEach(el=>{const items=D[el.dataset.list].map(t=>`<span>${t}</span>`).join(''); el.innerHTML=items+items;});
+  $('#trio').innerHTML=D.h_trio.map(([a,b],i)=>`<div data-a="log" style="--d:${(.6+i*.6).toFixed(2)}s"><b>0${i+1}</b><span><h3>${a}</h3><p>${b}</p></span></div>`).join('');
+  $('#flabels').innerHTML=D.h_pats.map((t,i)=>{const [x,y]=CL[i]; const left=x/800*100, top=y/600*100; return `<span class="lbl" data-a="log" style="--d:${(2.9+i*.5).toFixed(2)}s;left:calc(${left}% + 78px);top:calc(${top}% - 22px)">${t}</span>`}).join('');
+  const vals=[0,20,35,55,62];
+  $('#skills').innerHTML=`<div class="row hd2"><span>${D.pr_cols[0]}</span><span>${D.pr_cols[1]}</span><span></span></div>`+D.pr_sk.map((s,i)=>`<div class="row"><span>${s}</span><span class="bar2"><i class="${vals[i]<30?'low':''}" style="--w:${Math.max(vals[i],2)}%;--d:${(1+i*.15).toFixed(2)}s"></i></span><span class="v${vals[i]?'':' none'}">${vals[i]?vals[i]+D.pct:D.pr_none}</span></div>`).join('');
+  const xs=[40,440,900,1460];
+  $('#msteps').innerHTML=D.ms_steps.map((t,i)=>{const last=i===3; const pos=last?`right:40px;text-align:right;align-items:flex-end`:`left:${40+xs[i]-14}px`; return `<div class="st" data-a="log" style="${pos};--d:${[.9,1.5,2.3,3.2][i]}s"><b>0${i+1}</b><span>${t}</span></div>`}).join('');
+  $('#mcards').innerHTML=D.ms_cards.map(([a,b],i)=>`<div class="card" data-a="dash" style="--d:${(.6+i*.12).toFixed(2)}s"><h3>${a}</h3><p class="t">${b}</p></div>`).join('');
+  $('#stages').innerHTML=D.y_st.map(([a,b],i)=>{const x=[null,-82,-58,-36,-18,-6,0][i]; const total=i===6;
+    return `<div class="stage-i${i===0||i===6?' key':''}" data-a="rise" style="--d:${(.5+i*.14).toFixed(2)}s"><div class="moon${total?' total':''}">${total?'':'<svg class="tex" aria-hidden="true"><use href="#moon-tex"></use></svg><span class="limb"></span>'}${x===null?'':`<i class="m" style="--x:${x}%;--d:${(.9+i*.18).toFixed(2)}s"></i>`}</div><p class="n">0${i+1}</p><h3>${a}</h3><p>${b}</p></div>`}).join('');
+  $('#mods').innerHTML=D.pf_mods.map(([a,b,k],i)=>`<div class="card${k?' k':''}" data-a="dash" style="--d:${(.3+i*.1).toFixed(2)}s"><span class="hrow"><span class="ic"><i></i></span><h3>${a}</h3></span><p class="t">${b}</p></div>`).join('');
+  $('#phases').innerHTML=D.i_ph.map(([d,t,xs],i)=>`<div class="card${i===2?' hot':''}" data-a="dash" style="--d:${(.6+i*.85).toFixed(2)}s"><p class="n">${d}</p><h3>${t}</h3><ul>${xs.map(x=>`<li>${x}</li>`).join('')}</ul></div>`).join('');
+  $$('[data-money]').forEach(el=>{const v=fmt(+el.dataset.money,lang); el.textContent=lang==='fr'? v+' $ US' : (lang==='en'?'$':'US$ ')+v;});
+  $$('[data-count]').forEach(el=>{el.textContent=fmt(+el.dataset.count,lang);});
+  const [lg,pv,nx,fs]=D._ui; $('#langs').setAttribute('aria-label',lg); $('#prev').setAttribute('aria-label',pv); $('#next').setAttribute('aria-label',nx); $('#fs').setAttribute('aria-label',fs);
+  $$('#langs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.lang===lang));
+}
+function countUp(slide){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  $$('[data-count]',slide).forEach(el=>{const to=+el.dataset.count, t0=performance.now()+700, dur=1600;
+    const step=t=>{const p=Math.min(1,Math.max(0,(t-t0)/dur)); const e=1-Math.pow(1-p,3); el.textContent=fmt(to*e,lang); if(p<1) requestAnimationFrame(step);};
+    el.textContent=fmt(0,lang); requestAnimationFrame(step);});
+}
+function go(n,replay){
+  n=Math.max(0,Math.min(slides.length-1,n));
+  if(n===cur && !replay && slides[n].classList.contains('in')) return;
+  slides.forEach((s,i)=>{if(i!==n){s.classList.remove('on','in');}});
+  const s=slides[n]; s.classList.remove('in'); s.classList.add('on'); void s.offsetWidth; s.classList.add('in');
+  cur=n; countUp(s);
+  $('#count').textContent=String(n+1).padStart(2,'0')+' / '+String(slides.length).padStart(2,'0');
+  $('#bar').style.width=((n+1)/slides.length*100)+'%';
+  if(location.hash!=='#s'+(n+1)) history.replaceState(null,'','#s'+(n+1));
+}
+function setLang(l){ if(!T[l]) return; lang=l; try{localStorage.setItem('saros-deck-lang',l);}catch(e){} render(); go(cur,true); }
+
+const stage=$('#stage');
+function fit(){const s=Math.min(innerWidth/1920,innerHeight/1080); stage.style.transform=`translate(-50%,-50%) scale(${s})`;}
+addEventListener('resize',fit); fit();
+
+$('#prev').onclick=()=>go(cur-1); $('#next').onclick=()=>go(cur+1);
+$$('#langs button').forEach(b=>b.onclick=()=>setLang(b.dataset.lang));
+$('#fs').onclick=()=>{try{ if(document.fullscreenElement) document.exitFullscreen(); else document.documentElement.requestFullscreen().catch(()=>{});}catch(e){}};
+addEventListener('keydown',e=>{
+  if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();go(cur+1);}
+  else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();go(cur-1);}
+  else if(e.key==='Home') go(0); else if(e.key==='End') go(slides.length-1);
+  else if(e.key==='f'||e.key==='F') $('#fs').click();
+  else if(e.key==='l'||e.key==='L'){const ls=['pt','en','es','fr']; setLang(ls[(ls.indexOf(lang)+1)%4]);}
+});
+$('#viewport').addEventListener('click',e=>{ if(e.target.closest('a,button')) return; const x=e.clientX/innerWidth; go(x<.3?cur-1:cur+1); });
+let tx=null; addEventListener('touchstart',e=>{tx=e.touches[0].clientX},{passive:true});
+addEventListener('touchend',e=>{if(tx==null)return; const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50) go(dx<0?cur+1:cur-1); tx=null;});
+addEventListener('hashchange',()=>{const m=location.hash.match(/^#s(\d+)$/); if(m) go(+m[1]-1);});
+let idle; const uis=$$('.ui'); const wake=()=>{uis.forEach(u=>u.classList.remove('hide')); clearTimeout(idle); idle=setTimeout(()=>uis.forEach(u=>u.classList.add('hide')),2600);};
+addEventListener('mousemove',wake); addEventListener('keydown',wake); wake();
+
+try{const l=localStorage.getItem('saros-deck-lang'); if(T[l]) lang=l;}catch(e){}
+render();
+const m0=location.hash.match(/^#s(\d+)$/); go(m0? +m0[1]-1 : 0, true);
+</script>
+</body>
+</html>

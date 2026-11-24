@@ -328,6 +328,11 @@ function build() {
   for (const dir of ['admin', 'uploads']) {
     if (fs.existsSync(path.join(ROOT, dir))) fs.cpSync(path.join(ROOT, dir), path.join(OUT, dir), { recursive: true });
   }
+  // Apresentação comercial em /deck (só o index.html; outros arquivos da pasta ficam fora do site)
+  if (fs.existsSync(path.join(ROOT, 'deck', 'index.html'))) {
+    fs.mkdirSync(path.join(OUT, 'deck'), { recursive: true });
+    fs.copyFileSync(path.join(ROOT, 'deck', 'index.html'), path.join(OUT, 'deck', 'index.html'));
+  }
   if (fs.existsSync(path.join(ROOT, '.nojekyll'))) fs.copyFileSync(path.join(ROOT, '.nojekyll'), path.join(OUT, '.nojekyll'));
   console.log('build ok\n  ' + report.join('\n  '));
 }
