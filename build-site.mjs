@@ -28,4 +28,10 @@ for (const lang of LANGS) {
 console.log('3/3 copiando assets estáticos (favicons, og, guides, robots.txt, _redirects...)');
 fs.cpSync(STATIC, OUT, { recursive: true });
 
+// Pastas que o build.mjs já copia para dist/ e que não fazem parte das páginas geradas (CMS, imagens enviadas, apresentação)
+for (const dir of ['admin', 'uploads', 'deck']) {
+  const src = path.join(DIST, dir);
+  if (fs.existsSync(src)) fs.cpSync(src, path.join(OUT, dir), { recursive: true });
+}
+
 console.log(`\nPronto: ${OUT}`);
