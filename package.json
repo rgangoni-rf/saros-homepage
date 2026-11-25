@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node build.mjs",
+    "build:site": "node build-site.mjs",
     "dev": "node dev.mjs",
     "i18n:extract": "node i18n/extract.mjs",
     "i18n:check": "node i18n/check.mjs"

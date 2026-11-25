@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /site-pages
+
+Sitemap: https://sarosops.com/sitemap.xml

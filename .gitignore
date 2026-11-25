@@ -4,5 +4,6 @@ Thumbs.db
 *.zip
 node_modules/
 dist/
+site/
 i18n/work/
 i18n/source.json
