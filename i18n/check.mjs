@@ -2,8 +2,10 @@
 // Uso: npm run i18n:check   (sai com código 1 se faltar tradução)
 // Para traduzir o que faltar: veja i18n/README.md.
 import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { translateHtml } from './translate.mjs';
-const D = new URL('./', import.meta.url).pathname;
+const D = path.dirname(fileURLToPath(import.meta.url)) + path.sep;
 const html = fs.readFileSync(D + '../src/index.template.html', 'utf8');
 const missing = new Set();
 translateHtml(html, {}, { missing });
